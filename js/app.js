@@ -1058,8 +1058,8 @@ const HP = (() => {
       let advanced = false;
       while (overflow >= 0) {
         const items = ts.timerType === 'yoga' ? ts.poses : ts.phases;
-        const indexKey = ts.timerType === 'yoga' ? 'currentPoseIndex' : 'currentPhaseIndex';
-        const nextIdx = (ts[indexKey] || ts.currentPoseIndex) + 1;
+        const currentIdx = ts.timerType === 'yoga' ? ts.currentPoseIndex : ts.currentPhaseIndex;
+        const nextIdx = currentIdx + 1;
 
         if (nextIdx >= items.length) {
           finishSession();
