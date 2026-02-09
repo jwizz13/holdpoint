@@ -2,7 +2,7 @@
   "name": "HoldPoint",
   "short_name": "HoldPoint",
   "description": "Train and Track — Yin Yoga & Hangboard Timer",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#f0f7f0",
   "theme_color": "#2d5016",
