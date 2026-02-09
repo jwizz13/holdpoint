@@ -540,24 +540,74 @@ const HP = (() => {
 
       const list = document.getElementById('pose-list');
       list.innerHTML = '';
+
+      const fmtSec = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+      let itemNum = 0;
+
+      // Warmup row
+      itemNum++;
+      const warmupItem = document.createElement('div');
+      warmupItem.className = 'pose-item';
+      warmupItem.innerHTML = `
+        <div class="pose-item-row">
+          <div class="pose-number">${itemNum}</div>
+          <div class="pose-item-info">
+            <div class="pose-item-name">Warmup</div>
+            <div class="pose-item-desc">Get warmed up before hanging</div>
+          </div>
+        </div>
+        <div class="pose-item-time">${fmtSec(routine.warmupSeconds)}</div>
+      `;
+      list.appendChild(warmupItem);
+
+      // Grip sets with rest rows between them
+      const totalGripSets = routine.grips.length * routine.setsPerGrip;
+      let absoluteSet = 0;
+
       routine.grips.forEach((grip, i) => {
         for (let set = 1; set <= routine.setsPerGrip; set++) {
+          absoluteSet++;
+          itemNum++;
+
+          // Precise set time: reps × hang + (reps-1) × repRest + getReady
+          const setSeconds = routine.getReadySeconds
+            + (routine.repsPerSet * routine.hangSeconds)
+            + ((routine.repsPerSet - 1) * routine.repRestSeconds);
+
           const item = document.createElement('div');
           item.className = 'pose-item';
           item.innerHTML = `
             <div class="pose-item-row">
-              <div class="pose-number">${i * routine.setsPerGrip + set}</div>
+              <div class="pose-number">${itemNum}</div>
               <div class="pose-item-info">
                 <div class="pose-item-name">${grip} — Set ${set}</div>
                 <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
               </div>
             </div>
-            <div class="pose-item-time">${(() => { const ts = routine.repsPerSet * (routine.hangSeconds + routine.repRestSeconds); return `${Math.floor(ts / 60)}:${(ts % 60).toString().padStart(2, '0')}`; })()}</div>
+            <div class="pose-item-time">${fmtSec(setSeconds)}</div>
           `;
           list.appendChild(item);
+
+          // Set rest row (between sets, not after the last one)
+          if (absoluteSet < totalGripSets) {
+            itemNum++;
+            const restItem = document.createElement('div');
+            restItem.className = 'pose-item';
+            restItem.innerHTML = `
+              <div class="pose-item-row">
+                <div class="pose-number">${itemNum}</div>
+                <div class="pose-item-info">
+                  <div class="pose-item-name">Set Rest</div>
+                  <div class="pose-item-desc">Recovery between sets</div>
+                </div>
+              </div>
+              <div class="pose-item-time">${fmtSec(routine.setRestSeconds)}</div>
+            `;
+            list.appendChild(restItem);
+          }
         }
       });
-      debug('DETAIL', `Rendered hangboard detail for ${routine.grips.length} grips`);
+      debug('DETAIL', `Rendered hangboard detail for ${routine.grips.length} grips, ${itemNum} items`);
     }
 
     showScreen('screen-detail');
