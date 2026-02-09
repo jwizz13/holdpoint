@@ -725,8 +725,7 @@ const HP = (() => {
     return _audioCtx;
   }
 
-  // Unlock audio on ANY user gesture so timer bells work later.
-  // Also plays through a hidden <audio> element to bypass iOS silent mode switch.
+  // Unlock audio on ANY user gesture so timer bells work later
   function unlockAudio() {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
@@ -738,28 +737,12 @@ const HP = (() => {
     src.buffer = buf;
     src.connect(ctx.destination);
     src.start(0);
-
-    // Also play a tiny silent audio via HTML5 Audio to switch iOS audio session
-    // category — this allows Web Audio to play even when the mute switch is on
-    if (!window._silentAudioPlayed) {
-      try {
-        const silentDataUri = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAHAAGf9AAAIiuJs/80YBIAAAA0gAAAAAAAAAA/8AAAAUBwfB8HwfB8EAQBA4P/ygIAgCAIHB8Hw//KAgCAI8HwfB8EAQBAEAQBA4Pg+D4Pg+D4AAAAAA//tQxBcAAADSAAAAAAAAANIAAAAASZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//tQxC0AAADSAAAAAAAAANIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
-        const audio = new Audio(silentDataUri);
-        audio.play().then(() => {
-          debug('AUDIO', 'HTML5 silent audio played (silent-mode bypass)');
-        }).catch(() => {});
-        window._silentAudioPlayed = true;
-      } catch (e) {
-        debug('AUDIO', 'HTML5 silent audio failed', e);
-      }
-    }
-
-    debug('AUDIO', 'unlockAudio() complete');
+    debug('AUDIO', 'Silent unlock buffer played');
   }
 
-  // Attach unlock to common gestures — NOT once, so repeated taps re-unlock
+  // Attach unlock to first user gesture
   ['touchstart', 'touchend', 'click'].forEach(evt => {
-    document.addEventListener(evt, unlockAudio, { once: false, passive: true });
+    document.addEventListener(evt, unlockAudio, { once: true });
   });
 
   /**
@@ -1194,11 +1177,6 @@ const HP = (() => {
           ts.elapsed = overflow;
           ts.poseStartTime = now;
           const renderIdx = ts.timerType === 'yoga' ? ts.currentPoseIndex : ts.currentPhaseIndex;
-          // Play bell BEFORE render as a safeguard (render also plays, but this ensures it)
-          if (renderIdx > 0) {
-            debug('TIMER', `Auto-advance bell for index ${renderIdx}`);
-            playBell('change');
-          }
           if (ts.timerType === 'yoga') renderTimerPose(renderIdx);
           else renderHangboardPhase(renderIdx);
           break;
