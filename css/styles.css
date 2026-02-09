@@ -760,19 +760,20 @@ body {
   max-width: calc(50% - 5px);
   justify-self: center;
 }
-.stat-num { font-size: 24px; font-weight: 700; color: var(--green-dark); }
-.stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+.stat-num { font-size: 28px; font-weight: 700; color: var(--green-dark); }
+.stat-label { font-size: 13px; font-weight: 600; color: var(--text-muted); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
 .stat-split {
   display: flex;
   justify-content: center;
-  gap: 8px;
+  gap: 10px;
   margin-top: 6px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .stat-split-item {
   display: flex;
   align-items: center;
-  gap: 3px;
+  gap: 4px;
+  font-weight: 600;
   color: var(--text-muted);
 }
 .stat-split-dot {
@@ -798,13 +799,14 @@ body {
   margin-bottom: 6px;
 }
 
-.session-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
-.session-date { font-size: 12px; color: var(--text-light); }
+.session-name { font-size: 16px; font-weight: 700; color: var(--text-dark); }
+.session-date { font-size: 13px; font-weight: 500; color: var(--text-muted); }
 
 .session-details {
   display: flex;
   gap: 16px;
-  font-size: 13px;
+  font-size: 14px;
+  font-weight: 500;
   color: var(--text-muted);
 }
 
@@ -829,19 +831,20 @@ body {
   align-items: center;
   margin-bottom: 4px;
 }
-.weekly-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
-.weekly-total { font-size: 12px; color: var(--text-light); }
+.weekly-title { font-size: 15px; font-weight: 700; color: var(--text-dark); }
+.weekly-total { font-size: 14px; font-weight: 600; color: var(--text-muted); }
 .weekly-type-split {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
   margin-bottom: 10px;
-  font-size: 11px;
+  font-size: 13px;
 }
 .weekly-type-item {
   display: flex;
   align-items: center;
   gap: 4px;
+  font-weight: 600;
   color: var(--text-muted);
 }
 .weekly-type-dot {
@@ -883,8 +886,9 @@ body {
   gap: 6px;
   justify-content: center;
   margin-top: 10px;
-  font-size: 11px;
-  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 .legend-dot {
   width: 8px;
@@ -907,8 +911,8 @@ body {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 12px;
-  font-size: 14px;
-  font-weight: 600;
+  font-size: 15px;
+  font-weight: 700;
   color: var(--text-dark);
   cursor: pointer;
   transition: all 0.2s;
@@ -934,17 +938,18 @@ body {
   align-items: baseline;
   margin-bottom: 8px;
 }
-.month-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
-.month-total { font-size: 13px; color: var(--text-muted); }
+.month-name { font-size: 16px; font-weight: 700; color: var(--text-dark); }
+.month-total { font-size: 14px; font-weight: 500; color: var(--text-muted); }
 .month-breakdown {
   display: flex;
   gap: 16px;
-  font-size: 12px;
+  font-size: 13px;
 }
 .month-type {
   display: flex;
   align-items: center;
   gap: 5px;
+  font-weight: 600;
   color: var(--text-muted);
 }
 .month-type-dot {
@@ -984,8 +989,8 @@ body {
   border-radius: 20px;
   background: var(--card-bg);
   color: var(--text-muted);
-  font-size: 13px;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -997,9 +1002,9 @@ body {
 
 /* --- Date Group Headers --- */
 .history-date-group {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-light);
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--text-muted);
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin: 16px 0 8px;
@@ -1010,9 +1015,9 @@ body {
 /* --- Session Type Badge --- */
 .session-type-badge {
   display: inline-block;
-  font-size: 10px;
-  font-weight: 600;
-  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 3px 9px;
   border-radius: 10px;
   text-transform: uppercase;
   letter-spacing: 0.3px;
