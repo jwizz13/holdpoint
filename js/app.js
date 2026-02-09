@@ -44,7 +44,7 @@ const HP = (() => {
     const prefix = `[HP ${ts}] [${level}] [${category}]`;
     const style = {
       DEBUG: 'color: #94a3b8',
-      INFO: 'color: #2d6a4f; font-weight: bold',
+      INFO: 'color: #2F5630; font-weight: bold',
       WARN: 'color: #d97706; font-weight: bold',
       ERROR: 'color: #dc2626; font-weight: bold'
     }[level];
@@ -1372,57 +1372,337 @@ const HP = (() => {
     }
   }
 
+  // Track active history filter
+  let historyFilter = 'all';
+
+  /**
+   * Calculate current day streak (consecutive days with at least one session)
+   */
+  function calcStreak(sessions) {
+    if (!sessions.length) return 0;
+
+    // Get unique dates (YYYY-MM-DD) sorted newest first
+    const dateSet = new Set();
+    sessions.forEach(s => {
+      const d = new Date(s.date);
+      dateSet.add(d.toISOString().split('T')[0]);
+    });
+    const dates = [...dateSet].sort().reverse();
+
+    // Check if today or yesterday has a session (streak must be current)
+    const today = new Date().toISOString().split('T')[0];
+    const yesterday = new Date(Date.now() - 86400000).toISOString().split('T')[0];
+    if (dates[0] !== today && dates[0] !== yesterday) return 0;
+
+    let streak = 1;
+    for (let i = 0; i < dates.length - 1; i++) {
+      const curr = new Date(dates[i]);
+      const prev = new Date(dates[i + 1]);
+      const diff = (curr - prev) / 86400000;
+      if (diff === 1) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  /**
+   * Build last-7-days activity data for the stacked bar chart
+   * Returns { label, yogaMins, hangMins, totalMins } per day
+   */
+  function buildWeeklyData(sessions) {
+    const days = [];
+    const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const key = d.toISOString().split('T')[0];
+      const daySessions = sessions.filter(s => new Date(s.date).toISOString().split('T')[0] === key);
+      let yogaMins = 0, hangMins = 0;
+      daySessions.forEach(s => {
+        if (getSessionType(s) === 'hangboard') hangMins += (s.durationMin || 0);
+        else yogaMins += (s.durationMin || 0);
+      });
+      days.push({ label: dayNames[d.getDay()], yogaMins, hangMins, totalMins: yogaMins + hangMins, key });
+    }
+    return days;
+  }
+
+  /**
+   * Group sessions by date bucket (Today, Yesterday, This Week, Earlier)
+   */
+  function groupByDate(sessions) {
+    const now = new Date();
+    const todayKey = now.toISOString().split('T')[0];
+    const yesterdayKey = new Date(now - 86400000).toISOString().split('T')[0];
+    const weekAgo = new Date(now);
+    weekAgo.setDate(weekAgo.getDate() - 7);
+
+    const groups = { 'Today': [], 'Yesterday': [], 'This Week': [], 'Earlier': [] };
+
+    sessions.forEach(s => {
+      const d = new Date(s.date);
+      const key = d.toISOString().split('T')[0];
+      if (key === todayKey) groups['Today'].push(s);
+      else if (key === yesterdayKey) groups['Yesterday'].push(s);
+      else if (d > weekAgo) groups['This Week'].push(s);
+      else groups['Earlier'].push(s);
+    });
+
+    return groups;
+  }
+
+  /**
+   * Build monthly summary data — returns array of { label, totalHrs, yogaHrs, hangHrs, sessions, yogaPct, hangPct }
+   * sorted newest month first, going back as far as history exists
+   */
+  function buildMonthlySummary(sessions) {
+    const months = {};
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+
+    sessions.forEach(s => {
+      const d = new Date(s.date);
+      const key = `${d.getFullYear()}-${String(d.getMonth()).padStart(2, '0')}`;
+      if (!months[key]) {
+        months[key] = { label: `${monthNames[d.getMonth()]} ${d.getFullYear()}`, yogaMins: 0, hangMins: 0, count: 0, year: d.getFullYear(), month: d.getMonth() };
+      }
+      const type = getSessionType(s);
+      if (type === 'hangboard') months[key].hangMins += (s.durationMin || 0);
+      else months[key].yogaMins += (s.durationMin || 0);
+      months[key].count++;
+    });
+
+    return Object.values(months)
+      .sort((a, b) => b.year - a.year || b.month - a.month)
+      .map(m => {
+        const totalMins = m.yogaMins + m.hangMins;
+        return {
+          label: m.label,
+          totalHrs: (totalMins / 60).toFixed(1),
+          yogaHrs: (m.yogaMins / 60).toFixed(1),
+          hangHrs: (m.hangMins / 60).toFixed(1),
+          sessions: m.count,
+          yogaPct: totalMins > 0 ? Math.round((m.yogaMins / totalMins) * 100) : 0,
+          hangPct: totalMins > 0 ? Math.round((m.hangMins / totalMins) * 100) : 0
+        };
+      });
+  }
+
+  /**
+   * Render the monthly summary panel
+   */
+  function renderMonthlySummary() {
+    const panel = document.getElementById('monthly-summary-panel');
+    if (!panel) return;
+
+    const data = buildMonthlySummary(state.sessionHistory);
+    if (data.length === 0) {
+      panel.innerHTML = '<div class="empty-state">No sessions recorded yet.</div>';
+      return;
+    }
+
+    panel.innerHTML = data.map(m => `
+      <div class="month-row">
+        <div class="month-row-header">
+          <div class="month-name">${m.label}</div>
+          <div class="month-total">${m.totalHrs} hrs · ${m.sessions} sessions</div>
+        </div>
+        <div class="month-breakdown">
+          <div class="month-type">
+            <span class="month-type-dot yoga"></span>
+            Yoga: ${m.yogaHrs} hrs
+          </div>
+          <div class="month-type">
+            <span class="month-type-dot hangboard"></span>
+            Hangboard: ${m.hangHrs} hrs
+          </div>
+        </div>
+        <div class="month-bar-bg">
+          <div class="month-bar-yoga" style="width: ${m.yogaPct}%;"></div>
+          <div class="month-bar-hangboard" style="width: ${m.hangPct}%;"></div>
+        </div>
+      </div>
+    `).join('');
+
+    info('RENDER', `Rendered monthly summary: ${data.length} months`);
+  }
+
+  /**
+   * Detect session type from routine name
+   */
+  function getSessionType(session) {
+    const name = (session.routineName || '').toLowerCase();
+    if (name.includes('20mm') || name.includes('hangboard') || name.includes('sloper') || name.includes('pocket') || name.includes('crimp')) {
+      return 'hangboard';
+    }
+    return 'yoga';
+  }
+
   function renderHistory() {
     debug('RENDER', 'Rendering history screen');
 
-    const statsContainer = document.getElementById('history-stats');
     const listContainer = document.getElementById('history-list');
+    if (!listContainer) return;
 
+    // Apply filter
+    let filtered = state.sessionHistory;
+    if (historyFilter !== 'all') {
+      filtered = state.sessionHistory.filter(s => getSessionType(s) === historyFilter);
+    }
+
+    // --- Stats ---
     const totalSessions = state.sessionHistory.length;
     const totalMinutes = state.sessionHistory.reduce((sum, s) => sum + (s.durationMin || 0), 0);
     const totalHours = (totalMinutes / 60).toFixed(1);
 
-    // Count sessions this week
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
     const thisWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo).length;
+    const streak = calcStreak(state.sessionHistory);
+
+    // This month hours
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
+    const thisMonthMins = state.sessionHistory
+      .filter(s => new Date(s.date) >= monthStart)
+      .reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const thisMonthHrs = (thisMonthMins / 60).toFixed(1);
 
     document.getElementById('stat-sessions').textContent = totalSessions;
     document.getElementById('stat-hours').textContent = totalHours;
+    document.getElementById('stat-month-hrs').textContent = thisMonthHrs;
     document.getElementById('stat-week').textContent = thisWeek;
+    document.getElementById('stat-streak').textContent = streak;
 
-    if (!listContainer) return;
+    // --- Split stats by workout type ---
+    const splitHTML = (yogaVal, hangVal) =>
+      `<span class="stat-split-item"><span class="stat-split-dot yoga"></span>${yogaVal}</span>` +
+      `<span class="stat-split-item"><span class="stat-split-dot hangboard"></span>${hangVal}</span>`;
+
+    // Sessions split
+    const yogaSessions = state.sessionHistory.filter(s => getSessionType(s) === 'yoga').length;
+    const hangSessions = state.sessionHistory.filter(s => getSessionType(s) === 'hangboard').length;
+    const sessionsSplitEl = document.getElementById('stat-sessions-split');
+    if (sessionsSplitEl) sessionsSplitEl.innerHTML = splitHTML(yogaSessions, hangSessions);
+
+    // All-time hours split
+    const yogaTotalMins = state.sessionHistory.filter(s => getSessionType(s) === 'yoga').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const hangTotalMins = state.sessionHistory.filter(s => getSessionType(s) === 'hangboard').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const hoursSplitEl = document.getElementById('stat-hours-split');
+    if (hoursSplitEl) hoursSplitEl.innerHTML = splitHTML((yogaTotalMins / 60).toFixed(1), (hangTotalMins / 60).toFixed(1));
+
+    // This month split
+    const yogaMonthMins = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'yoga').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const hangMonthMins = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'hangboard').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const monthSplitEl = document.getElementById('stat-month-split');
+    if (monthSplitEl) monthSplitEl.innerHTML = splitHTML((yogaMonthMins / 60).toFixed(1), (hangMonthMins / 60).toFixed(1));
+
+    // This week split
+    const yogaWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'yoga').length;
+    const hangWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'hangboard').length;
+    const weekSplitEl = document.getElementById('stat-week-split');
+    if (weekSplitEl) weekSplitEl.innerHTML = splitHTML(yogaWeek, hangWeek);
+
+    // --- Weekly Activity Chart (stacked: yoga green + hangboard persimmon) ---
+    const weeklyData = buildWeeklyData(state.sessionHistory);
+    const maxMins = Math.max(...weeklyData.map(d => d.totalMins), 1);
+    const weeklyTotal = weeklyData.reduce((sum, d) => sum + d.totalMins, 0);
+    const barsContainer = document.getElementById('weekly-bars');
+    const weeklyTotalEl = document.getElementById('weekly-total');
+
+    if (barsContainer) {
+      barsContainer.innerHTML = '';
+      weeklyData.forEach(day => {
+        const totalPct = Math.max(Math.round((day.totalMins / maxMins) * 100), 5);
+        const yogaPct = day.totalMins > 0 ? Math.round((day.yogaMins / day.totalMins) * totalPct) : 0;
+        const hangPct = day.totalMins > 0 ? totalPct - yogaPct : 0;
+
+        const col = document.createElement('div');
+        col.className = 'weekly-bar-col';
+
+        let barHTML = `<div class="weekly-bar-stack" style="height: ${totalPct}%;" title="${day.yogaMins}m yoga, ${day.hangMins}m hangboard">`;
+        if (day.totalMins === 0) {
+          barHTML += `<div class="weekly-bar-seg empty" style="height: 100%;"></div>`;
+        } else {
+          if (day.yogaMins > 0) barHTML += `<div class="weekly-bar-seg yoga" style="height: ${yogaPct > 0 ? (day.yogaMins / day.totalMins * 100) : 0}%;"></div>`;
+          if (day.hangMins > 0) barHTML += `<div class="weekly-bar-seg hangboard" style="height: ${hangPct > 0 ? (day.hangMins / day.totalMins * 100) : 0}%;"></div>`;
+        }
+        barHTML += `</div>`;
+
+        col.innerHTML = barHTML + `<div class="weekly-bar-label">${day.label}</div>`;
+        barsContainer.appendChild(col);
+      });
+    }
+    if (weeklyTotalEl) {
+      weeklyTotalEl.textContent = weeklyTotal >= 60 ? `${(weeklyTotal / 60).toFixed(1)} hrs` : `${weeklyTotal} min`;
+    }
+
+    // Weekly type split (yoga hrs vs hangboard hrs for last 7 days)
+    const weeklyYogaMins = weeklyData.reduce((sum, d) => sum + d.yogaMins, 0);
+    const weeklyHangMins = weeklyData.reduce((sum, d) => sum + d.hangMins, 0);
+    const weeklyTypeSplitEl = document.getElementById('weekly-type-split');
+    if (weeklyTypeSplitEl) {
+      const fmtTime = (mins) => mins >= 60 ? `${(mins / 60).toFixed(1)} hrs` : `${mins} min`;
+      weeklyTypeSplitEl.innerHTML =
+        `<span class="weekly-type-item"><span class="weekly-type-dot yoga"></span>${fmtTime(weeklyYogaMins)}</span>` +
+        `<span class="weekly-type-item"><span class="weekly-type-dot hangboard"></span>${fmtTime(weeklyHangMins)}</span>`;
+    }
+
+    // --- Filter button state ---
+    document.querySelectorAll('.history-filter-btn').forEach(btn => {
+      btn.classList.toggle('active', btn.dataset.filter === historyFilter);
+    });
+
+    // --- Grouped session list ---
     listContainer.innerHTML = '';
 
-    if (state.sessionHistory.length === 0) {
-      listContainer.innerHTML = '<div class="empty-state">No sessions yet. Complete a workout to see it here!</div>';
-      debug('RENDER', 'History empty');
+    if (filtered.length === 0) {
+      const msg = historyFilter === 'all'
+        ? 'No sessions yet. Complete a workout to see it here!'
+        : `No ${historyFilter} sessions yet.`;
+      listContainer.innerHTML = `<div class="empty-state">${msg}</div>`;
+      debug('RENDER', 'History empty (filtered)');
       return;
     }
 
-    state.sessionHistory.forEach(session => {
-      const date = new Date(session.date);
-      const dateStr = date.toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
-      });
+    const groups = groupByDate(filtered);
 
-      const item = document.createElement('div');
-      item.className = 'session-item';
-      item.innerHTML = `
-        <div class="session-top">
-          <div class="session-name">${session.routineName}</div>
-          <div class="session-date">${dateStr}</div>
-        </div>
-        <div class="session-details">
-          <span>${session.durationMin} min</span>
-          ${session.coreTime ? `<span>${session.coreTime}:00 core</span>` : ''}
-          ${session.completed ? `<span>${session.completed}</span>` : ''}
-        </div>
-      `;
-      listContainer.appendChild(item);
+    Object.entries(groups).forEach(([label, sessions]) => {
+      if (sessions.length === 0) return;
+
+      const header = document.createElement('div');
+      header.className = 'history-date-group';
+      header.textContent = label;
+      listContainer.appendChild(header);
+
+      sessions.forEach(session => {
+        const date = new Date(session.date);
+        const dateStr = date.toLocaleDateString('en-US', {
+          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit'
+        });
+        const type = getSessionType(session);
+
+        const item = document.createElement('div');
+        item.className = 'session-item';
+        item.innerHTML = `
+          <div class="session-top">
+            <div class="session-name">${session.routineName}</div>
+            <div class="session-date">${dateStr}</div>
+          </div>
+          <div class="session-details">
+            <span class="session-type-badge ${type}">${type}</span>
+            <span>${session.durationMin} min</span>
+            ${session.coreTime ? `<span>${session.coreTime}:00 core</span>` : ''}
+          </div>
+        `;
+        listContainer.appendChild(item);
+      });
     });
 
-    info('RENDER', `Rendered ${state.sessionHistory.length} history entries`);
+    info('RENDER', `Rendered ${filtered.length} history entries (filter: ${historyFilter})`);
   }
 
   // ============================================
@@ -2507,6 +2787,25 @@ Step 6: Test it
         if (screen === 'screen-history') renderHistory();
         showScreen(screen);
       });
+    });
+
+    // History filter tabs
+    document.querySelectorAll('.history-filter-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        historyFilter = btn.dataset.filter;
+        debug('HISTORY', `Filter changed: ${historyFilter}`);
+        renderHistory();
+      });
+    });
+
+    // Monthly Summary toggle
+    document.getElementById('btn-monthly-summary')?.addEventListener('click', () => {
+      const btn = document.getElementById('btn-monthly-summary');
+      const panel = document.getElementById('monthly-summary-panel');
+      const isOpen = panel.classList.toggle('open');
+      btn.classList.toggle('open', isOpen);
+      if (isOpen) renderMonthlySummary();
+      debug('HISTORY', `Monthly summary ${isOpen ? 'opened' : 'closed'}`);
     });
 
     // Avatar → profile

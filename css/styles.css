@@ -6,12 +6,12 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --green-dark: #2d6a4f;
-  --green-mid: #40916c;
-  --green-light: #52b788;
-  --green-lighter: #74c69d;
-  --green-pale: #b7e4c7;
-  --green-faint: #d8f3dc;
+  --green-dark: #2F5630;
+  --green-mid: #3d7340;
+  --green-light: #4d9150;
+  --green-lighter: #6aad6d;
+  --green-pale: #a3cfa5;
+  --green-faint: #d4e8d5;
   --bg: #ffffff;
   --card-bg: #f8fafc;
   --card-border: #e2e8f0;
@@ -65,7 +65,7 @@ body {
 .auth-bg {
   position: absolute;
   inset: 0;
-  background: linear-gradient(135deg, #1a3c34 0%, #2d6a4f 30%, #40916c 60%, #52b788 100%);
+  background: linear-gradient(135deg, #1a3320 0%, #2F5630 30%, #3d7340 60%, #4d9150 100%);
   z-index: 0;
 }
 
@@ -740,9 +740,10 @@ body {
 }
 
 .history-stats {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
 }
 
 .stat-card {
@@ -754,8 +755,33 @@ body {
   text-align: center;
 }
 
+.stat-card:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  max-width: calc(50% - 5px);
+  justify-self: center;
+}
 .stat-num { font-size: 24px; font-weight: 700; color: var(--green-dark); }
 .stat-label { font-size: 11px; color: var(--text-light); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.3px; }
+.stat-split {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 6px;
+  font-size: 10px;
+}
+.stat-split-item {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  color: var(--text-muted);
+}
+.stat-split-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+}
+.stat-split-dot.yoga { background: #2F5630; }
+.stat-split-dot.hangboard { background: #D84B20; }
 
 .session-item {
   background: var(--card-bg);
@@ -788,6 +814,211 @@ body {
   padding: 48px 20px;
   font-size: 14px;
 }
+
+/* --- Weekly Activity Chart --- */
+.weekly-activity {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+.weekly-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+.weekly-title { font-size: 13px; font-weight: 600; color: var(--text-dark); }
+.weekly-total { font-size: 12px; color: var(--text-light); }
+.weekly-type-split {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+  font-size: 11px;
+}
+.weekly-type-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-muted);
+}
+.weekly-type-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+}
+.weekly-type-dot.yoga { background: #2F5630; }
+.weekly-type-dot.hangboard { background: #D84B20; }
+.weekly-bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 6px;
+  height: 60px;
+}
+.weekly-bar-col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  justify-content: flex-end;
+}
+.weekly-bar-stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column-reverse;
+  border-radius: 4px 4px 0 0;
+  overflow: hidden;
+  min-height: 3px;
+}
+.weekly-bar-seg { width: 100%; transition: height 0.3s ease; }
+.weekly-bar-seg.yoga { background: #2F5630; }
+.weekly-bar-seg.hangboard { background: #D84B20; }
+.weekly-bar-seg.empty { background: #e8ebe6; }
+.weekly-legend {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: center;
+  margin-top: 10px;
+  font-size: 11px;
+  color: var(--text-light);
+}
+.legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  display: inline-block;
+}
+.legend-dot.yoga { background: #2F5630; }
+.legend-dot.hangboard { background: #D84B20; margin-left: 10px; }
+
+/* --- Monthly Summary --- */
+.monthly-summary-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 4px;
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.monthly-summary-btn:active { background: var(--green-faint); }
+.monthly-chevron { transition: transform 0.2s; }
+.monthly-summary-btn.open .monthly-chevron { transform: rotate(180deg); }
+.monthly-summary-panel {
+  display: none;
+  margin-bottom: 16px;
+}
+.monthly-summary-panel.open { display: block; }
+.month-row {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+}
+.month-row-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 8px;
+}
+.month-name { font-size: 15px; font-weight: 600; color: var(--text-dark); }
+.month-total { font-size: 13px; color: var(--text-muted); }
+.month-breakdown {
+  display: flex;
+  gap: 16px;
+  font-size: 12px;
+}
+.month-type {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-muted);
+}
+.month-type-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+.month-type-dot.yoga { background: #2F5630; }
+.month-type-dot.hangboard { background: #D84B20; }
+.month-bar-bg {
+  height: 6px;
+  background: #eee;
+  border-radius: 3px;
+  margin-top: 8px;
+  overflow: hidden;
+  display: flex;
+}
+.month-bar-yoga { height: 100%; background: #2F5630; }
+.month-bar-hangboard { height: 100%; background: #D84B20; }
+.weekly-bar-label {
+  font-size: 10px;
+  color: var(--text-light);
+  margin-top: 4px;
+  text-transform: uppercase;
+}
+
+/* --- History Filters --- */
+.history-filters {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.history-filter-btn {
+  flex: 1;
+  padding: 8px 0;
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  background: var(--card-bg);
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.history-filter-btn.active {
+  background: #2F5630;
+  color: #fff;
+  border-color: #2F5630;
+}
+
+/* --- Date Group Headers --- */
+.history-date-group {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-light);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 16px 0 8px;
+  padding-left: 4px;
+}
+.history-date-group:first-child { margin-top: 0; }
+
+/* --- Session Type Badge --- */
+.session-type-badge {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+.session-type-badge.yoga { background: #e8f0e8; color: #2F5630; }
+.session-type-badge.hangboard { background: #fde8de; color: #D84B20; }
 
 /* --- Profile --- */
 .profile-avatar-lg {
