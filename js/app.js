@@ -225,7 +225,10 @@ const HP = (() => {
       const { data, error: authError } = await supabase.auth.signUp({
         email,
         password,
-        options: { data: { full_name: name } }
+        options: {
+          data: { full_name: name },
+          emailRedirectTo: 'https://jwizz13.github.io/holdpoint/'
+        }
       });
 
       if (authError) {
@@ -1560,21 +1563,23 @@ const HP = (() => {
 
     const weekAgo = new Date();
     weekAgo.setDate(weekAgo.getDate() - 7);
-    const thisWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo).length;
     const streak = calcStreak(state.sessionHistory);
 
-    // This month hours
+    // This month session count
     const now = new Date();
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
-    const thisMonthMins = state.sessionHistory
-      .filter(s => new Date(s.date) >= monthStart)
+    const thisMonthSessions = state.sessionHistory.filter(s => new Date(s.date) >= monthStart).length;
+
+    // This week hours
+    const thisWeekMins = state.sessionHistory
+      .filter(s => new Date(s.date) > weekAgo)
       .reduce((sum, s) => sum + (s.durationMin || 0), 0);
-    const thisMonthHrs = (thisMonthMins / 60).toFixed(1);
+    const thisWeekHrs = (thisWeekMins / 60).toFixed(1);
 
     document.getElementById('stat-sessions').textContent = totalSessions;
     document.getElementById('stat-hours').textContent = totalHours;
-    document.getElementById('stat-month-hrs').textContent = thisMonthHrs;
-    document.getElementById('stat-week').textContent = thisWeek;
+    document.getElementById('stat-month-sessions').textContent = thisMonthSessions;
+    document.getElementById('stat-week-hrs').textContent = thisWeekHrs;
     document.getElementById('stat-streak').textContent = streak;
 
     // --- Split stats by workout type ---
@@ -1594,17 +1599,17 @@ const HP = (() => {
     const hoursSplitEl = document.getElementById('stat-hours-split');
     if (hoursSplitEl) hoursSplitEl.innerHTML = splitHTML((yogaTotalMins / 60).toFixed(1), (hangTotalMins / 60).toFixed(1));
 
-    // This month split
-    const yogaMonthMins = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'yoga').reduce((sum, s) => sum + (s.durationMin || 0), 0);
-    const hangMonthMins = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'hangboard').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    // This month split (session counts)
+    const yogaMonthSessions = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'yoga').length;
+    const hangMonthSessions = state.sessionHistory.filter(s => new Date(s.date) >= monthStart && getSessionType(s) === 'hangboard').length;
     const monthSplitEl = document.getElementById('stat-month-split');
-    if (monthSplitEl) monthSplitEl.innerHTML = splitHTML((yogaMonthMins / 60).toFixed(1), (hangMonthMins / 60).toFixed(1));
+    if (monthSplitEl) monthSplitEl.innerHTML = splitHTML(yogaMonthSessions, hangMonthSessions);
 
-    // This week split
-    const yogaWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'yoga').length;
-    const hangWeek = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'hangboard').length;
+    // This week split (hours)
+    const yogaWeekMins = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'yoga').reduce((sum, s) => sum + (s.durationMin || 0), 0);
+    const hangWeekMins = state.sessionHistory.filter(s => new Date(s.date) > weekAgo && getSessionType(s) === 'hangboard').reduce((sum, s) => sum + (s.durationMin || 0), 0);
     const weekSplitEl = document.getElementById('stat-week-split');
-    if (weekSplitEl) weekSplitEl.innerHTML = splitHTML(yogaWeek, hangWeek);
+    if (weekSplitEl) weekSplitEl.innerHTML = splitHTML((yogaWeekMins / 60).toFixed(1), (hangWeekMins / 60).toFixed(1));
 
     // --- Weekly Activity Chart (stacked: yoga green + hangboard persimmon) ---
     const weeklyData = buildWeeklyData(state.sessionHistory);
