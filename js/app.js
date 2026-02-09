@@ -24,7 +24,7 @@ const HP = (() => {
     console.error('[HP] Failed to initialize Supabase client:', e);
   }
 
-  console.log('%c[HP] HoldPoint v0.2.0 loaded', 'color: green; font-weight: bold;');
+  console.log('%c[HP] HoldPoint v0.2.1 loaded', 'color: green; font-weight: bold;');
 
   // ============================================
   // LOGGING SYSTEM
@@ -805,7 +805,9 @@ const HP = (() => {
     return _audioCtx;
   }
 
-  // Unlock audio on ANY user gesture so timer bells work later
+  // Unlock audio on ANY user gesture so timer bells work later.
+  // Must run on EVERY gesture (once:false) because iOS can re-suspend
+  // the AudioContext after background, notifications, phone calls, etc.
   function unlockAudio() {
     const ctx = getAudioContext();
     if (ctx.state === 'suspended') {
@@ -817,12 +819,25 @@ const HP = (() => {
     src.buffer = buf;
     src.connect(ctx.destination);
     src.start(0);
+
+    // HTML5 Audio hack: playing a silent audio element upgrades the iOS
+    // audio session from "ambient" (respects mute switch) to "playback"
+    // (plays through mute switch). Without this, bells are silent when
+    // the physical mute switch is on.
+    if (!window._silentAudioPlayed) {
+      try {
+        const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwMHAAAAAAD/+1DEAAAHAAGf9AAAISQQM/8MQBAAAABAA3/EACMAANwfB8Hw');
+        audio.play().catch(() => {});
+        window._silentAudioPlayed = true;
+        debug('AUDIO', 'HTML5 Audio silent hack played');
+      } catch (e) {}
+    }
     debug('AUDIO', 'Silent unlock buffer played');
   }
 
-  // Attach unlock to first user gesture
+  // Attach unlock to EVERY user gesture — keeps AudioContext alive on iOS
   ['touchstart', 'touchend', 'click'].forEach(evt => {
-    document.addEventListener(evt, unlockAudio, { once: true });
+    document.addEventListener(evt, unlockAudio, { once: false, passive: true });
   });
 
   /**
