@@ -1,0 +1,3078 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HoldPoint">
+  <title>HoldPoint</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+  <!-- ============================================ -->
+  <!-- LOGIN SCREEN                                 -->
+  <!-- ============================================ -->
+  <div id="screen-login" class="screen screen-auth">
+    <div class="auth-bg"></div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Mountain outline -->
+            <polyline points="4,40 24,10 44,40" fill="none"/>
+            <!-- Snow cap notch -->
+            <polyline points="19,18 22,22 26,22 29,18" fill="none" stroke-width="1.5"/>
+            <!-- Pine tree on right slope -->
+            <line x1="36" y1="38" x2="36" y2="24"/>
+            <polyline points="32,32 36,27 40,32" fill="none"/>
+            <polyline points="33,29 36,24.5 39,29" fill="none"/>
+          </svg>
+        </div>
+        <h1 class="auth-title">HoldPoint</h1>
+        <p class="auth-tagline">Train and Track</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+            <input class="form-input" id="login-email" type="email" placeholder="Email address" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <input class="form-input" id="login-password" type="password" placeholder="Password" autocomplete="current-password">
+          </div>
+        </div>
+        <div class="forgot-link"><a href="#">Forgot password?</a></div>
+        <div id="login-error" class="form-error"></div>
+        <button type="submit" class="btn-auth">Sign In</button>
+      </form>
+      <div class="auth-switch">Don't have an account? <a id="show-signup" href="#">Sign up</a></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SIGNUP SCREEN                                -->
+  <!-- ============================================ -->
+  <div id="screen-signup" class="screen screen-auth">
+    <div class="auth-bg"></div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Mountain outline -->
+            <polyline points="4,40 24,10 44,40" fill="none"/>
+            <!-- Snow cap notch -->
+            <polyline points="19,18 22,22 26,22 29,18" fill="none" stroke-width="1.5"/>
+            <!-- Pine tree on right slope -->
+            <line x1="36" y1="38" x2="36" y2="24"/>
+            <polyline points="32,32 36,27 40,32" fill="none"/>
+            <polyline points="33,29 36,24.5 39,29" fill="none"/>
+          </svg>
+        </div>
+        <h1 class="auth-title">Join HoldPoint</h1>
+        <p class="auth-tagline">Create your free account</p>
+      </div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="form-input" id="signup-name" type="text" placeholder="Full name" autocomplete="name">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+            <input class="form-input" id="signup-email" type="email" placeholder="Email address" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <input class="form-input" id="signup-password" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
+          </div>
+        </div>
+        <div id="signup-error" class="form-error"></div>
+        <button type="submit" class="btn-auth">Create Account</button>
+      </form>
+      <div class="auth-switch">Already have an account? <a id="show-login" href="#">Sign in</a></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HOME SCREEN                                  -->
+  <!-- ============================================ -->
+  <div id="screen-home" class="screen">
+    <div class="app-header">
+      <div class="app-title">HoldPoint</div>
+      <div class="app-avatar" id="app-avatar" data-user-initials>??</div>
+    </div>
+    <div class="app-subtitle">Timed hold workouts</div>
+
+    <div class="workout-tabs">
+      <button class="tab-pill active" data-type="yoga">Yin Yoga</button>
+      <button class="tab-pill" data-type="hangboard">Hangboard</button>
+    </div>
+
+    <div id="core-time-control" class="time-control">
+      <div class="time-control-label">Core Pose Time</div>
+      <div class="time-row">
+        <button class="time-btn" id="btn-time-down">−</button>
+        <div class="time-value" id="core-time-value">5:00</div>
+        <button class="time-btn" id="btn-time-up">+</button>
+      </div>
+    </div>
+
+    <div id="routine-list" class="routine-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ROUTINE DETAIL SCREEN                        -->
+  <!-- ============================================ -->
+  <div id="screen-detail" class="screen">
+    <button class="detail-back" id="btn-detail-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+
+    <div id="detail-title" class="detail-title"></div>
+    <div id="detail-meta" class="detail-meta"></div>
+    <div id="detail-focus" class="detail-focus"></div>
+
+    <button class="btn-start" id="btn-start-routine">Start Routine</button>
+
+    <div id="pose-list" class="pose-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TIMER SCREEN (Yoga)                          -->
+  <!-- ============================================ -->
+  <div id="screen-timer" class="screen screen-timer">
+    <div class="timer-top">
+      <button class="timer-close" id="btn-timer-close">✕</button>
+      <div class="timer-routine-label" id="timer-routine-label">Routine</div>
+      <div class="timer-pose-counter" id="timer-pose-counter" style="font-size:14px;color:#94a3b8;">1/22</div>
+    </div>
+
+    <!-- Pose image area -->
+    <div class="pose-image-area" id="timer-pose-image">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Pose photo</span>
+    </div>
+
+    <!-- Pose info -->
+    <div class="timer-pose-name" id="timer-pose-name">Pose Name</div>
+    <div class="timer-pose-desc" id="timer-pose-desc">Description</div>
+
+    <!-- Countdown -->
+    <div class="timer-countdown" id="timer-countdown">5:00</div>
+
+    <!-- Progress bar for current pose -->
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="timer-progress-fill"></div>
+    </div>
+
+    <!-- Next pose preview -->
+    <div id="timer-next-pose" style="text-align:center;color:#94a3b8;font-size:13px;margin-bottom:20px;">Next: Pose Name</div>
+
+    <!-- Controls: prev, play/pause, next -->
+    <div class="timer-controls">
+      <button class="ctrl-btn ctrl-prev" id="btn-timer-prev">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      <button class="ctrl-btn ctrl-play" id="btn-timer-play">
+        <svg id="icon-play" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+        <svg id="icon-pause" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+      </button>
+      <button class="ctrl-btn ctrl-next" id="btn-timer-next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+    </div>
+
+    <!-- Progress dots -->
+    <div class="progress-dots" id="timer-dots"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HISTORY SCREEN                               -->
+  <!-- ============================================ -->
+  <div id="screen-history" class="screen">
+    <div class="history-title">History</div>
+
+    <div class="history-stats" id="history-stats">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-sessions">0</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-hours">0</div>
+        <div class="stat-label">Hours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-week">0</div>
+        <div class="stat-label">This Week</div>
+      </div>
+    </div>
+
+    <div id="history-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PROFILE SCREEN                               -->
+  <!-- ============================================ -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-avatar-lg" data-user-initials>??</div>
+    <div class="profile-name" id="profile-name">User</div>
+    <div class="profile-email" id="profile-email">user@email.com</div>
+
+    <div class="profile-menu-item" id="btn-my-routines">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        </div>
+        <div class="profile-menu-text">My Routines</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-manage-photos">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <div class="profile-menu-text">Manage Pose Photos</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-settings">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-amber">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div class="profile-menu-text">Settings</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-share-routine">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="profile-menu-text">Community Routines</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-logout">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+        <div class="profile-menu-text">Sign Out</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SETTINGS SCREEN                              -->
+  <!-- ============================================ -->
+  <div id="screen-settings" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-settings-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Settings</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Yoga Timer</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Core Pose Time</div>
+            <div class="settings-sublabel">Duration for main poses (1–10 min)</div>
+          </div>
+          <div class="slider-control">
+            <span class="settings-value" id="settings-core-val">5:00</span>
+            <input type="range" id="settings-core-slider" min="1" max="10" value="5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Sound & Alerts</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Bell Sound</div>
+            <div class="settings-sublabel">Play chime on pose changes</div>
+          </div>
+          <button class="toggle-switch active" id="toggle-bell"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Keep Screen On</div>
+            <div class="settings-sublabel">Prevents sleep during workouts</div>
+          </div>
+          <button class="toggle-switch active" id="toggle-wakelock"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Google Sheets</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Auto-Log Sessions</div>
+            <div class="settings-sublabel">Log completed workouts to a spreadsheet</div>
+          </div>
+          <button class="toggle-switch" id="toggle-sheets"></button>
+        </div>
+        <div id="sheets-config" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 12px;">
+          <div style="margin-bottom: 8px;">
+            <label style="font-size: 12px; color: var(--text-light);">Sheet ID</label>
+            <input type="text" id="settings-sheet-id" placeholder="Paste your Google Sheet ID" style="width: 100%; padding: 8px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 14px; margin-top: 4px; background: var(--input-bg);">
+          </div>
+          <div>
+            <label style="font-size: 12px; color: var(--text-light);">Tab Name</label>
+            <input type="text" id="settings-sheet-tab" placeholder="e.g. Daily View" style="width: 100%; padding: 8px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 14px; margin-top: 4px; background: var(--input-bg);">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Data</div>
+      <button class="settings-btn danger" id="btn-clear-history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        Clear Session History
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- MY ROUTINES SCREEN                           -->
+  <!-- ============================================ -->
+  <div id="screen-my-routines" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-my-routines-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">My Routines</div>
+    </div>
+
+    <button class="btn-create-routine" id="btn-create-routine">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Create Custom Routine
+    </button>
+
+    <div id="my-routines-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- COMMUNITY ROUTINES SCREEN                    -->
+  <!-- ============================================ -->
+  <div id="screen-community" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-community-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Community Routines</div>
+    </div>
+
+    <div id="community-list">
+      <div class="empty-state">
+        Community routines will be available once Supabase is connected. Share your own routines and discover what others have created!
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- MANAGE POSE PHOTOS SCREEN                    -->
+  <!-- ============================================ -->
+  <div id="screen-photos" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-photos-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Pose Photos</div>
+    </div>
+
+    <div class="photo-filter-row" id="photo-filters">
+      <button class="photo-filter-btn active" data-filter="all">All</button>
+      <button class="photo-filter-btn" data-filter="assigned">Has Photo</button>
+      <button class="photo-filter-btn" data-filter="empty">No Photo</button>
+    </div>
+
+    <div id="photo-grid" class="photo-grid"></div>
+
+    <input type="file" id="photo-file-input" accept="image/*" style="display:none">
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CUSTOM ROUTINE BUILDER SCREEN                -->
+  <!-- ============================================ -->
+  <div id="screen-builder" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-builder-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title" id="builder-title">New Routine</div>
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Routine Name</div>
+      <input type="text" class="builder-input" id="builder-name" placeholder="e.g. Morning Flow">
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Focus / Description</div>
+      <input type="text" class="builder-input" id="builder-focus" placeholder="e.g. Hip openers and backbends">
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Poses</div>
+      <div id="builder-pose-list" class="builder-pose-list"></div>
+      <button class="btn-add-pose" id="btn-builder-add-pose">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Pose
+      </button>
+    </div>
+
+    <button class="btn-save-routine" id="btn-save-routine">Save Routine</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BOTTOM NAV                                   -->
+  <!-- ============================================ -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-item" data-screen="screen-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+      Home
+    </button>
+    <button class="nav-item" data-screen="screen-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      History
+    </button>
+    <button class="nav-item" data-screen="screen-profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </button>
+  </nav>
+
+  <!-- Supabase Client -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/app.js"></script>
+
+  <!-- Scripts -->
+  <script>
+/**
+ * HoldPoint — Built-in Routines Data
+ * Contains all 6 default routines (4 yoga, 2 hangboard)
+ *
+ * Yoga pose durations are in MINUTES.
+ * Poses marked isCore:true scale with the core pose time setting.
+ * Poses marked isTransition:true stay fixed regardless of core time.
+ * Savasana uses isSavasana:true and runs at half core time.
+ */
+
+const HP_DATA = (() => {
+  'use strict';
+
+  const yogaRoutines = {
+    'Yin Yoga': {
+      type: 'yoga',
+      focus: 'Full body flow with straddles, backbends, dragons, twists',
+      poses: [
+        { name: 'On Knees Toes Tucked', duration: 0.5, description: 'Kneel with toes tucked under, sit back on heels', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.5, description: 'Kneel with feet flat, sit back on heels', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 0.5, description: 'Toes tucked, deeper stretch', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.5, description: 'Feet flat, gentle stretch', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 1.5, description: 'Toes tucked, hold longer', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 1.5, description: 'Feet flat, hold longer', isTransition: true },
+        { name: 'Long Legged Butterfly', duration: 5, description: 'Legs extended wide, fold forward', isCore: true },
+        { name: 'Straddle Fold Left', duration: 5, description: 'Wide legs, fold toward left foot', isCore: true },
+        { name: 'Straddle Fold Right', duration: 5, description: 'Wide legs, fold toward right foot', isCore: true },
+        { name: 'Straddle Fold Middle', duration: 5, description: 'Wide legs, fold straight forward', isCore: true },
+        { name: 'Sphinx', duration: 5, description: 'Lie on belly, prop up on forearms, gentle backbend', isCore: true },
+        { name: 'Seal', duration: 5, description: 'Like sphinx but arms straight, deeper backbend', isCore: true },
+        { name: 'Child\'s Pose', duration: 2, description: 'Knees wide, fold forward, arms extended', isTransition: true },
+        { name: 'Low Dragon Left', duration: 2.5, description: 'Deep lunge, left foot forward, hands on floor', isCore: true },
+        { name: 'Dragon Hands on Knee Left', duration: 2.5, description: 'Left foot forward, hands on front knee, upright', isCore: true },
+        { name: 'Wide Dragon Left', duration: 2.5, description: 'Left foot forward, foot steps wide, sink hips', isCore: true },
+        { name: 'Dragon Knee Down Left', duration: 2.5, description: 'Left foot forward, back knee down, hands on floor', isCore: true },
+        { name: 'Downward Dog', duration: 1, description: 'Inverted V, press hips up and back', isTransition: true },
+        { name: 'Low Dragon Right', duration: 2.5, description: 'Deep lunge, right foot forward, hands on floor', isCore: true },
+        { name: 'Dragon Hands on Knee Right', duration: 2.5, description: 'Right foot forward, hands on front knee, upright', isCore: true },
+        { name: 'Wide Dragon Right', duration: 2.5, description: 'Right foot forward, foot steps wide, sink hips', isCore: true },
+        { name: 'Dragon Knee Down Right', duration: 2.5, description: 'Right foot forward, back knee down, hands on floor', isCore: true },
+        { name: 'Downward Dog', duration: 1, description: 'Inverted V, press hips up and back', isTransition: true },
+        { name: 'Twist Right', duration: 3, description: 'Lying twist, knees fall to right', isCore: true },
+        { name: 'Twist Left', duration: 3, description: 'Lying twist, knees fall to left', isCore: true },
+        { name: 'Savasana', duration: 3, description: 'Final rest, lie flat on back, relax completely', isSavasana: true }
+      ]
+    },
+
+    'Happy Yin Happy Hips': {
+      type: 'yoga',
+      focus: 'Hip openers with shoelace, pigeon, hurdlers, twists',
+      poses: [
+        { name: 'On Knees Toes Tucked', duration: 0.75, description: 'Kneel with toes tucked under', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.75, description: 'Kneel with feet flat', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 0.75, description: 'Toes tucked, deeper', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.75, description: 'Feet flat, gentle', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 1.5, description: 'Toes tucked, long hold', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 1.5, description: 'Feet flat, long hold', isTransition: true },
+        { name: 'Long Legged Butterfly', duration: 5, description: 'Legs extended wide, fold forward', isCore: true },
+        { name: 'Right Shoelace Twist', duration: 1, description: 'Legs crossed right over left, gentle twist', isTransition: true },
+        { name: 'Right Shoelace Fold', duration: 5, description: 'Legs crossed right over left, fold forward', isCore: true },
+        { name: 'Right Half Pigeon Chest Up', duration: 1, description: 'Right shin forward, chest lifted', isTransition: true },
+        { name: 'Right Half Pigeon Fold', duration: 5, description: 'Right shin forward, fold over front leg', isCore: true },
+        { name: 'Left Shoelace Twist', duration: 1, description: 'Legs crossed left over right, gentle twist', isTransition: true },
+        { name: 'Left Shoelace Fold', duration: 5, description: 'Legs crossed left over right, fold forward', isCore: true },
+        { name: 'Left Half Pigeon Chest Up', duration: 1, description: 'Left shin forward, chest lifted', isTransition: true },
+        { name: 'Left Half Pigeon Fold', duration: 5, description: 'Left shin forward, fold over front leg', isCore: true },
+        { name: 'Downward Dog', duration: 1, description: 'Inverted V, shake it out', isTransition: true },
+        { name: 'On Knees Full Layback', duration: 5, description: 'Kneel and lean all the way back', isCore: true },
+        { name: 'Downward Dog', duration: 1, description: 'Inverted V, shake it out', isTransition: true },
+        { name: 'Hurdler Right', duration: 5, description: 'Right leg extended, left foot to inner thigh, fold forward', isCore: true },
+        { name: 'Hurdler Left', duration: 5, description: 'Left leg extended, right foot to inner thigh, fold forward', isCore: true },
+        { name: 'Straddle Fold', duration: 5, description: 'Wide legs, fold straight forward', isCore: true },
+        { name: 'Twist Right', duration: 5, description: 'Lying twist, knees fall to right', isCore: true },
+        { name: 'Twist Left', duration: 5, description: 'Lying twist, knees fall to left', isCore: true },
+        { name: 'Savasana', duration: 3, description: 'Final rest, lie flat, relax', isSavasana: true }
+      ]
+    },
+
+    'The Yin Side of Letting Go': {
+      type: 'yoga',
+      focus: 'Spine work, shoelace, pigeon, and deep twists',
+      poses: [
+        { name: 'On Knees Toes Tucked', duration: 0.5, description: 'Kneel with toes tucked under', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.5, description: 'Kneel with feet flat', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 0.5, description: 'Toes tucked, deeper', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 0.5, description: 'Feet flat, gentle', isTransition: true },
+        { name: 'On Knees Toes Tucked', duration: 1.5, description: 'Toes tucked, long hold', isTransition: true },
+        { name: 'On Knees Feet Flat', duration: 1.5, description: 'Feet flat, long hold', isTransition: true },
+        { name: 'Long Legged Butterfly', duration: 5, description: 'Legs extended wide, fold forward', isCore: true },
+        { name: 'Sphinx', duration: 5, description: 'Lie on belly, prop up on forearms', isCore: true },
+        { name: 'Sphinx + Seal', duration: 5, description: 'Transition from sphinx to seal, deeper backbend', isCore: true },
+        { name: 'Child\'s Pose', duration: 1, description: 'Counterpose, knees wide, fold forward', isTransition: true },
+        { name: 'Cat Cow', duration: 1, description: 'Hands and knees, alternate arch and round spine', isTransition: true },
+        { name: 'Right Shoelace Twist', duration: 1, description: 'Legs crossed right over left, gentle twist', isTransition: true },
+        { name: 'Right Shoelace Side Stretch', duration: 4, description: 'Legs crossed right over left, side stretch', isCore: true },
+        { name: 'Shake Out Right', duration: 0.5, description: 'Release and shake out right side', isTransition: true },
+        { name: 'Left Shoelace Twist', duration: 1, description: 'Legs crossed left over right, gentle twist', isTransition: true },
+        { name: 'Left Shoelace Side Stretch', duration: 4, description: 'Legs crossed left over right, side stretch', isCore: true },
+        { name: 'Shake Out Left', duration: 0.5, description: 'Release and shake out left side', isTransition: true },
+        { name: 'Right Pigeon Chest Up', duration: 2, description: 'Right shin forward, chest lifted', isTransition: true },
+        { name: 'Right Pigeon Fold', duration: 4, description: 'Right shin forward, fold forward', isCore: true },
+        { name: 'Left Pigeon Chest Up', duration: 2, description: 'Left shin forward, chest lifted', isTransition: true },
+        { name: 'Left Pigeon Fold', duration: 4, description: 'Left shin forward, fold forward', isCore: true },
+        { name: 'Downward Dog', duration: 2, description: 'Inverted V, shake it out', isTransition: true },
+        { name: 'Twist Right', duration: 5, description: 'Lying twist, knees fall to right', isCore: true },
+        { name: 'Twist Left', duration: 5, description: 'Lying twist, knees fall to left', isCore: true },
+        { name: 'Savasana', duration: 3, description: 'Final rest, lie flat, relax', isSavasana: true }
+      ]
+    },
+
+    'Upper Body': {
+      type: 'yoga',
+      focus: 'Shoulders, chest, upper back release',
+      poses: [
+        { name: 'Melting Heart', duration: 5, description: 'Knees on floor, chest melts toward ground, arms extended', isCore: true },
+        { name: 'Thread the Needle Right', duration: 5, description: 'Right arm threads under left, shoulder to floor', isCore: true },
+        { name: 'Thread the Needle Left', duration: 5, description: 'Left arm threads under right, shoulder to floor', isCore: true },
+        { name: 'Broken Wing Right', duration: 5, description: 'Lie on right side, right arm extended behind', isCore: true },
+        { name: 'Broken Wing Left', duration: 5, description: 'Lie on left side, left arm extended behind', isCore: true },
+        { name: 'Eagle Arms Right', duration: 5, description: 'Right arm under left, wrap forearms, lift elbows', isCore: true },
+        { name: 'Eagle Arms Left', duration: 5, description: 'Left arm under right, wrap forearms, lift elbows', isCore: true },
+        { name: 'Sphinx', duration: 5, description: 'Lie on belly, prop up on forearms, gentle backbend', isCore: true },
+        { name: 'Seal', duration: 5, description: 'Like sphinx but arms straight, deeper backbend', isCore: true },
+        { name: 'Twisted Dragon Right', duration: 5, description: 'Low lunge right foot forward, twist and reach', isCore: true },
+        { name: 'Twisted Dragon Left', duration: 5, description: 'Low lunge left foot forward, twist and reach', isCore: true },
+        { name: 'Savasana', duration: 5, description: 'Final rest, lie flat on back, relax completely', isSavasana: true }
+      ]
+    }
+  };
+
+  const hangboardRoutines = {
+    '20mm + Slopers': {
+      type: 'hangboard',
+      description: '3 sets each grip, 7s hang / 3s rest, 6 reps per set',
+      grips: ['20mm Edge', 'Slopers'],
+      warmupSeconds: 300,
+      getReadySeconds: 5,
+      hangSeconds: 7,
+      repRestSeconds: 3,
+      setRestSeconds: 180,
+      repsPerSet: 6,
+      setsPerGrip: 3
+    },
+    '20mm + 2-Finger Pockets': {
+      type: 'hangboard',
+      description: '3 sets each grip, 7s hang / 3s rest, 6 reps per set',
+      grips: ['20mm Edge', '2-Finger Pockets'],
+      warmupSeconds: 300,
+      getReadySeconds: 5,
+      hangSeconds: 7,
+      repRestSeconds: 3,
+      setRestSeconds: 180,
+      repsPerSet: 6,
+      setsPerGrip: 3
+    }
+  };
+
+  /**
+   * Calculate total session duration for a yoga routine given core time in minutes
+   */
+  function calcYogaDuration(routine, coreMinutes) {
+    let total = 0;
+    for (const pose of routine.poses) {
+      if (pose.isCore) {
+        // Scale proportionally: if default core is 5min and pose is 2.5min,
+        // at 4min core the pose becomes 2min (ratio preserved)
+        total += (pose.duration / 5) * coreMinutes;
+      } else if (pose.isSavasana) {
+        total += coreMinutes / 2;
+      } else {
+        total += pose.duration;
+      }
+    }
+    return Math.round(total);
+  }
+
+  /**
+   * Calculate total duration for a hangboard routine in minutes
+   */
+  function calcHangboardDuration(routine) {
+    const gripCount = routine.grips.length;
+    const setsTotal = gripCount * routine.setsPerGrip;
+    const repsTotal = setsTotal * routine.repsPerSet;
+    const hangTime = repsTotal * routine.hangSeconds;
+    const repRests = repsTotal * routine.repRestSeconds;
+    const setRests = (setsTotal - 1) * routine.setRestSeconds;
+    const totalSeconds = routine.warmupSeconds + hangTime + repRests + setRests + (setsTotal * routine.getReadySeconds);
+    return Math.round(totalSeconds / 60);
+  }
+
+  /**
+   * Get the actual duration for a yoga pose given core time
+   */
+  function getPoseDuration(pose, coreMinutes) {
+    if (pose.isCore) {
+      return (pose.duration / 5) * coreMinutes;
+    } else if (pose.isSavasana) {
+      return coreMinutes / 2;
+    }
+    return pose.duration;
+  }
+
+  return {
+    yogaRoutines,
+    hangboardRoutines,
+    calcYogaDuration,
+    calcHangboardDuration,
+    getPoseDuration
+  };
+})();
+  </script>
+  <script>
+/**
+ * HoldPoint — Main Application
+ * Version: 0.1.0 (Step 1: UI Shell + Navigation)
+ *
+ * Logging is built into every layer. To view logs:
+ *   - Open browser console (F12 or Cmd+Option+I)
+ *   - Filter by [HP] to see all HoldPoint logs
+ *   - Timestamps on every entry for tracing issues
+ */
+
+const HP = (() => {
+  'use strict';
+
+  // ============================================
+  // SUPABASE CLIENT
+  // ============================================
+  const SUPABASE_URL = 'https://yvrbjpdtlirnrhrdizyy.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inl2cmJqcGR0bGlybnJocmRpenl5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1OTUzMzUsImV4cCI6MjA4NjE3MTMzNX0.IKrj5DrUHUuoDM0U5FiSDFbV1jP0aww7cIHZ1k-o6Ss';
+
+  let supabase = null;
+  try {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+  } catch (e) {
+    console.error('[HP] Failed to initialize Supabase client:', e);
+  }
+
+  // ============================================
+  // LOGGING SYSTEM
+  // ============================================
+  const LOG_LEVELS = { DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3 };
+  let currentLogLevel = LOG_LEVELS.DEBUG; // Show everything during development
+  const logHistory = []; // Keep last 500 entries for export
+
+  function log(level, category, message, data = null) {
+    const now = new Date();
+    const ts = now.toISOString().substring(11, 23); // HH:MM:SS.mmm
+    const entry = { ts: now.toISOString(), level, category, message, data };
+
+    logHistory.push(entry);
+    if (logHistory.length > 500) logHistory.shift();
+
+    if (LOG_LEVELS[level] < currentLogLevel) return;
+
+    const prefix = `[HP ${ts}] [${level}] [${category}]`;
+    const style = {
+      DEBUG: 'color: #94a3b8',
+      INFO: 'color: #2d6a4f; font-weight: bold',
+      WARN: 'color: #d97706; font-weight: bold',
+      ERROR: 'color: #dc2626; font-weight: bold'
+    }[level];
+
+    if (data) {
+      console.log(`%c${prefix} ${message}`, style, data);
+    } else {
+      console.log(`%c${prefix} ${message}`, style);
+    }
+  }
+
+  // Convenience methods
+  const debug = (cat, msg, data) => log('DEBUG', cat, msg, data);
+  const info = (cat, msg, data) => log('INFO', cat, msg, data);
+  const warn = (cat, msg, data) => log('WARN', cat, msg, data);
+  const error = (cat, msg, data) => log('ERROR', cat, msg, data);
+
+  // Export logs for troubleshooting
+  function exportLogs() {
+    const blob = new Blob([JSON.stringify(logHistory, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `holdpoint-logs-${new Date().toISOString().substring(0, 19).replace(/:/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+    info('LOG', 'Logs exported to file');
+  }
+
+  // ============================================
+  // APP STATE
+  // ============================================
+  const state = {
+    currentScreen: null,
+    previousScreen: null,
+    user: null, // Will hold user object after login
+    workoutType: 'yoga', // 'yoga' or 'hangboard'
+    corePoseMinutes: 5, // 1-10, default 5
+    selectedRoutine: null, // Current routine name
+    timerState: null, // Timer runtime state
+    sessionHistory: [], // Loaded from Supabase later, localStorage for now
+    bellEnabled: true,
+    wakeLockEnabled: true,
+    sheetsEnabled: false,
+    sheetId: '',
+    sheetTab: '',
+    customRoutines: [],
+    posePhotos: {},
+    photoFilter: 'all',
+    editingPoseName: null
+  };
+
+  // ============================================
+  // SCREEN NAVIGATION
+  // ============================================
+  function showScreen(screenId) {
+    const prev = state.currentScreen;
+    debug('NAV', `Navigating: ${prev} → ${screenId}`);
+
+    // Hide all screens
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+
+    // Show target screen
+    const target = document.getElementById(screenId);
+    if (!target) {
+      error('NAV', `Screen not found: ${screenId}`);
+      return;
+    }
+    target.classList.add('active');
+
+    // Toggle bottom nav visibility
+    const nav = document.getElementById('bottom-nav');
+    const hideNavScreens = ['screen-login', 'screen-signup', 'screen-timer', 'screen-settings', 'screen-my-routines', 'screen-community', 'screen-photos', 'screen-builder'];
+    if (hideNavScreens.includes(screenId)) {
+      nav.classList.add('hidden');
+      debug('NAV', 'Bottom nav hidden');
+    } else {
+      nav.classList.remove('hidden');
+      debug('NAV', 'Bottom nav visible');
+    }
+
+    // Update nav active state
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.classList.toggle('active', item.dataset.screen === screenId);
+    });
+
+    state.previousScreen = prev;
+    state.currentScreen = screenId;
+    info('NAV', `Screen active: ${screenId}`);
+
+    // Scroll to top on screen change
+    window.scrollTo(0, 0);
+  }
+
+  // ============================================
+  // AUTH (Supabase)
+  // ============================================
+  async function handleLogin(e) {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    info('AUTH', `Login attempt for: ${email}`);
+    clearFormErrors();
+
+    if (!email) {
+      showFormError('login-error', 'Please enter your email');
+      return;
+    }
+    if (!password) {
+      showFormError('login-error', 'Please enter your password');
+      return;
+    }
+
+    if (!supabase) {
+      showFormError('login-error', 'Connection error. Please refresh.');
+      error('AUTH', 'Supabase client not initialized');
+      return;
+    }
+
+    // Show loading state
+    const btn = e.target.querySelector('button[type="submit"]');
+    const origText = btn?.textContent;
+    if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true; }
+
+    try {
+      const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+
+      if (authError) {
+        showFormError('login-error', authError.message);
+        warn('AUTH', `Login failed: ${authError.message}`);
+        return;
+      }
+
+      const user = data.user;
+      state.user = {
+        id: user.id,
+        email: user.email,
+        displayName: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+        initials: (user.user_metadata?.full_name || user.email).substring(0, 2).toUpperCase()
+      };
+
+      info('AUTH', `Login successful: ${email}`, { id: user.id });
+      saveUserToStorage(state.user);
+      await onLoginSuccess();
+    } catch (err) {
+      showFormError('login-error', 'Something went wrong. Please try again.');
+      error('AUTH', 'Login exception', err);
+    } finally {
+      if (btn) { btn.textContent = origText; btn.disabled = false; }
+    }
+  }
+
+  async function handleSignup(e) {
+    e.preventDefault();
+    const name = document.getElementById('signup-name').value.trim();
+    const email = document.getElementById('signup-email').value.trim();
+    const password = document.getElementById('signup-password').value;
+
+    info('AUTH', `Signup attempt: ${email}, name: ${name}`);
+    clearFormErrors();
+
+    if (!name) { showFormError('signup-error', 'Please enter your name'); return; }
+    if (!email) { showFormError('signup-error', 'Please enter your email'); return; }
+    if (!password || password.length < 6) { showFormError('signup-error', 'Password must be at least 6 characters'); return; }
+
+    if (!supabase) {
+      showFormError('signup-error', 'Connection error. Please refresh.');
+      return;
+    }
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const origText = btn?.textContent;
+    if (btn) { btn.textContent = 'Creating account...'; btn.disabled = true; }
+
+    try {
+      const { data, error: authError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: { full_name: name } }
+      });
+
+      if (authError) {
+        showFormError('signup-error', authError.message);
+        warn('AUTH', `Signup failed: ${authError.message}`);
+        return;
+      }
+
+      // Check if email confirmation is required
+      if (data.user && !data.session) {
+        showFormError('signup-error', 'Check your email to confirm your account, then log in.');
+        info('AUTH', 'Signup successful, email confirmation required');
+        return;
+      }
+
+      const user = data.user;
+      const initials = name.split(' ').map(n => n[0]).join('').toUpperCase().substring(0, 2);
+      state.user = {
+        id: user.id,
+        email: user.email,
+        displayName: name,
+        initials: initials
+      };
+
+      info('AUTH', `Signup successful: ${email}`, { id: user.id });
+      saveUserToStorage(state.user);
+      await onLoginSuccess();
+    } catch (err) {
+      showFormError('signup-error', 'Something went wrong. Please try again.');
+      error('AUTH', 'Signup exception', err);
+    } finally {
+      if (btn) { btn.textContent = origText; btn.disabled = false; }
+    }
+  }
+
+  async function handleLogout() {
+    info('AUTH', `Logging out user: ${state.user?.email}`);
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+    state.user = null;
+    localStorage.removeItem('hp_user');
+    showScreen('screen-login');
+  }
+
+  async function onLoginSuccess() {
+    debug('AUTH', 'Running post-login setup');
+    updateUserUI();
+
+    // Load from Supabase first, fall back to localStorage
+    await loadSettingsFromDB();
+    await loadSessionHistoryFromDB();
+    await loadCustomRoutinesFromDB();
+    loadPosePhotos(); // Photos stay in localStorage for now (too large for DB)
+
+    renderRoutines();
+    showScreen('screen-home');
+    info('APP', 'App ready, showing home screen');
+  }
+
+  function saveUserToStorage(user) {
+    try {
+      localStorage.setItem('hp_user', JSON.stringify(user));
+      debug('STORAGE', 'User saved to localStorage');
+    } catch (e) {
+      error('STORAGE', 'Failed to save user', e);
+    }
+  }
+
+  async function loadUserFromStorage() {
+    // First try Supabase session
+    if (supabase) {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const user = session.user;
+          state.user = {
+            id: user.id,
+            email: user.email,
+            displayName: user.user_metadata?.full_name || user.user_metadata?.name || user.email.split('@')[0],
+            initials: (user.user_metadata?.full_name || user.email).substring(0, 2).toUpperCase()
+          };
+          info('AUTH', `Restored Supabase session: ${state.user.email}`);
+          return true;
+        }
+      } catch (e) {
+        warn('AUTH', 'Supabase session check failed, trying localStorage', e.message);
+      }
+    }
+
+    // Fall back to localStorage
+    try {
+      const saved = localStorage.getItem('hp_user');
+      if (saved) {
+        state.user = JSON.parse(saved);
+        info('STORAGE', `Restored user session: ${state.user.email}`);
+        return true;
+      }
+    } catch (e) {
+      error('STORAGE', 'Failed to load user', e);
+    }
+    return false;
+  }
+
+  // ============================================
+  // FORM HELPERS
+  // ============================================
+  function showFormError(elementId, message) {
+    const el = document.getElementById(elementId);
+    if (el) {
+      el.textContent = message;
+      el.classList.add('visible');
+      debug('UI', `Form error shown: ${message}`);
+    }
+  }
+
+  function clearFormErrors() {
+    document.querySelectorAll('.form-error').forEach(el => {
+      el.classList.remove('visible');
+      el.textContent = '';
+    });
+  }
+
+  // ============================================
+  // UI UPDATES
+  // ============================================
+  function updateUserUI() {
+    if (!state.user) return;
+    debug('UI', 'Updating user UI elements');
+
+    // Avatar initials
+    document.querySelectorAll('[data-user-initials]').forEach(el => {
+      el.textContent = state.user.initials;
+    });
+
+    // Profile name/email
+    const nameEl = document.getElementById('profile-name');
+    const emailEl = document.getElementById('profile-email');
+    if (nameEl) nameEl.textContent = state.user.displayName;
+    if (emailEl) emailEl.textContent = state.user.email;
+  }
+
+  // ============================================
+  // WORKOUT TYPE TABS
+  // ============================================
+  function setWorkoutType(type) {
+    debug('UI', `Switching workout type: ${state.workoutType} → ${type}`);
+    state.workoutType = type;
+
+    document.querySelectorAll('.tab-pill').forEach(pill => {
+      pill.classList.toggle('active', pill.dataset.type === type);
+    });
+
+    // Show/hide core time control (only for yoga)
+    const timeControl = document.getElementById('core-time-control');
+    if (timeControl) {
+      timeControl.style.display = type === 'yoga' ? 'block' : 'none';
+      debug('UI', `Core time control ${type === 'yoga' ? 'shown' : 'hidden'}`);
+    }
+
+    renderRoutines();
+    info('UI', `Workout type set to: ${type}`);
+  }
+
+  // ============================================
+  // CORE POSE TIME
+  // ============================================
+  function adjustCoreTime(delta) {
+    const prev = state.corePoseMinutes;
+    state.corePoseMinutes = Math.max(1, Math.min(10, state.corePoseMinutes + delta));
+    debug('TIMER', `Core time adjusted: ${prev} → ${state.corePoseMinutes} (delta: ${delta})`);
+
+    document.getElementById('core-time-value').textContent = `${state.corePoseMinutes}:00`;
+    renderRoutines(); // Recalculate all session times
+  }
+
+  // ============================================
+  // ROUTINE RENDERING
+  // ============================================
+  function renderRoutines() {
+    const container = document.getElementById('routine-list');
+    if (!container) return;
+
+    debug('RENDER', `Rendering routines for type: ${state.workoutType}, core: ${state.corePoseMinutes}min`);
+    container.innerHTML = '';
+
+    const routines = state.workoutType === 'yoga'
+      ? HP_DATA.yogaRoutines
+      : HP_DATA.hangboardRoutines;
+
+    let count = 0;
+    for (const [name, routine] of Object.entries(routines)) {
+      const duration = routine.type === 'yoga'
+        ? HP_DATA.calcYogaDuration(routine, state.corePoseMinutes)
+        : HP_DATA.calcHangboardDuration(routine);
+
+      const poseCount = routine.type === 'yoga'
+        ? routine.poses.length
+        : `${routine.grips.length} grips`;
+
+      const focus = routine.focus || routine.description || '';
+
+      const card = document.createElement('div');
+      card.className = 'routine-card';
+      card.dataset.routine = name;
+      card.innerHTML = `
+        <div class="routine-header">
+          <div class="routine-name">${name}</div>
+          <div class="routine-time">${duration} min</div>
+        </div>
+        <div class="routine-info">${poseCount}${routine.type === 'yoga' ? ' poses' : ''}</div>
+        <div class="routine-tag">${focus}</div>
+      `;
+      card.addEventListener('click', () => openRoutineDetail(name));
+      container.appendChild(card);
+      count++;
+    }
+
+    // Add custom yoga routines to the yoga tab
+    if (state.workoutType === 'yoga' && state.customRoutines && state.customRoutines.length > 0) {
+      state.customRoutines.forEach((routine, idx) => {
+        const totalMin = Math.round(routine.poses.reduce((s, p) => s + p.duration, 0));
+        const card = document.createElement('div');
+        card.className = 'routine-card';
+        card.dataset.routine = routine.name;
+        card.innerHTML = `
+          <div class="routine-header">
+            <div class="routine-name">${routine.name}</div>
+            <div class="routine-time">${totalMin} min</div>
+          </div>
+          <div class="routine-info">${routine.poses.length} poses · Custom</div>
+          <div class="routine-tag">${routine.focus || ''}</div>
+        `;
+        card.addEventListener('click', () => openRoutineDetail(routine.name));
+        container.appendChild(card);
+        count++;
+      });
+    }
+
+    info('RENDER', `Rendered ${count} routine cards`);
+  }
+
+  // ============================================
+  // ROUTINE DETAIL
+  // ============================================
+  function openRoutineDetail(routineName) {
+    info('NAV', `Opening routine detail: ${routineName}`);
+    state.selectedRoutine = routineName;
+
+    // Check custom routines first, then built-ins
+    const customRoutine = (state.customRoutines || []).find(r => r.name === routineName);
+    const routines = { ...HP_DATA.yogaRoutines, ...HP_DATA.hangboardRoutines };
+    const routine = customRoutine || routines[routineName];
+    if (!routine) {
+      error('DETAIL', `Routine not found: ${routineName}`);
+      return;
+    }
+
+    const isYoga = routine.type === 'yoga';
+    debug('DETAIL', `Routine type: ${routine.type}, yoga: ${isYoga}`);
+
+    // Update header
+    document.getElementById('detail-title').textContent = routineName;
+
+    if (isYoga) {
+      const isCustom = customRoutine || routine._isCustom;
+      let duration;
+      if (isCustom) {
+        duration = Math.round(routine.poses.reduce((s, p) => s + p.duration, 0));
+      } else {
+        duration = HP_DATA.calcYogaDuration(routine, state.corePoseMinutes);
+      }
+      document.getElementById('detail-meta').textContent = isCustom
+        ? `${routine.poses.length} poses · ${duration} min · Custom`
+        : `${routine.poses.length} poses · ${duration} min · Core: ${state.corePoseMinutes}:00`;
+      document.getElementById('detail-focus').textContent = routine.focus || '';
+
+      // Render pose list
+      const list = document.getElementById('pose-list');
+      list.innerHTML = '';
+      routine.poses.forEach((pose, i) => {
+        const dur = isCustom ? pose.duration : HP_DATA.getPoseDuration(pose, state.corePoseMinutes);
+        const totalSec = Math.round(dur * 60);
+        const mins = Math.floor(totalSec / 60);
+        const secs = totalSec % 60;
+        const durDisplay = `${mins}:${secs.toString().padStart(2, '0')}`;
+
+        const item = document.createElement('div');
+        item.className = 'pose-item';
+        item.innerHTML = `
+          <div class="pose-item-row">
+            <div class="pose-number">${i + 1}</div>
+            <div class="pose-item-info">
+              <div class="pose-item-name">${pose.name}</div>
+              <div class="pose-item-desc">${pose.description}</div>
+            </div>
+          </div>
+          <div class="pose-item-time">${durDisplay}</div>
+        `;
+        list.appendChild(item);
+      });
+      debug('DETAIL', `Rendered ${routine.poses.length} poses`);
+    } else {
+      // Hangboard detail
+      const duration = HP_DATA.calcHangboardDuration(routine);
+      document.getElementById('detail-meta').textContent =
+        `${routine.grips.length} grips · ${duration} min · ${routine.setsPerGrip} sets × ${routine.repsPerSet} reps`;
+      document.getElementById('detail-focus').textContent = routine.description;
+
+      const list = document.getElementById('pose-list');
+      list.innerHTML = '';
+      routine.grips.forEach((grip, i) => {
+        for (let set = 1; set <= routine.setsPerGrip; set++) {
+          const item = document.createElement('div');
+          item.className = 'pose-item';
+          item.innerHTML = `
+            <div class="pose-item-row">
+              <div class="pose-number">${i * routine.setsPerGrip + set}</div>
+              <div class="pose-item-info">
+                <div class="pose-item-name">${grip} — Set ${set}</div>
+                <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+              </div>
+            </div>
+            <div class="pose-item-time">${(() => { const ts = routine.repsPerSet * (routine.hangSeconds + routine.repRestSeconds); return `${Math.floor(ts / 60)}:${(ts % 60).toString().padStart(2, '0')}`; })()}</div>
+          `;
+          list.appendChild(item);
+        }
+      });
+      debug('DETAIL', `Rendered hangboard detail for ${routine.grips.length} grips`);
+    }
+
+    showScreen('screen-detail');
+  }
+
+  // ============================================
+  // TIMER ENGINE (Yoga Timer)
+  // ============================================
+
+  /**
+   * Format milliseconds to "m:ss" string
+   */
+  function formatTime(ms) {
+    const totalSeconds = Math.ceil(ms / 1000);
+    const mins = Math.floor(totalSeconds / 60);
+    const secs = totalSeconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
+  }
+
+  // ============================================
+  // WAKE LOCK — keep screen on during workouts
+  // ============================================
+  let wakeLock = null;
+
+  async function requestWakeLock() {
+    if (state.wakeLockEnabled === false) {
+      debug('TIMER', 'Wake lock skipped (disabled in settings)');
+      return;
+    }
+    try {
+      if ('wakeLock' in navigator) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        info('TIMER', 'Wake lock acquired — screen will stay on');
+        wakeLock.addEventListener('release', () => {
+          debug('TIMER', 'Wake lock released');
+        });
+      } else {
+        warn('TIMER', 'Wake Lock API not supported on this device');
+      }
+    } catch (e) {
+      warn('TIMER', 'Wake lock request failed', e.message);
+    }
+  }
+
+  function releaseWakeLock() {
+    if (wakeLock) {
+      wakeLock.release();
+      wakeLock = null;
+      info('TIMER', 'Wake lock released');
+    }
+  }
+
+  // Re-request wake lock when page becomes visible again (it gets released on hide)
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.timerState?.isRunning && !wakeLock) {
+      requestWakeLock();
+    }
+  });
+
+  // ============================================
+  // BACKGROUND TIMER — setInterval backup so bells
+  // play even when page is backgrounded
+  // ============================================
+  let bgIntervalId = null;
+
+  function startBackgroundTimer() {
+    stopBackgroundTimer();
+    bgIntervalId = setInterval(backgroundTick, 500);
+    debug('TIMER', 'Background timer started (500ms interval)');
+  }
+
+  function stopBackgroundTimer() {
+    if (bgIntervalId !== null) {
+      clearInterval(bgIntervalId);
+      bgIntervalId = null;
+      debug('TIMER', 'Background timer stopped');
+    }
+  }
+
+  function backgroundTick() {
+    if (!state.timerState || !state.timerState.isRunning) return;
+
+    const ts = state.timerState;
+    const now = Date.now();
+    const elapsed = ts.elapsed + (now - ts.poseStartTime);
+    const remaining = ts.poseDurationMs - elapsed;
+
+    // Only act if pose/phase has expired — the rAF loop handles normal UI updates
+    if (remaining <= 0) {
+      debug('TIMER', 'Background tick detected phase expiry');
+      // Trigger the catch-up logic in timerTick
+      if (ts.animFrameId) cancelAnimationFrame(ts.animFrameId);
+      ts.animFrameId = requestAnimationFrame(timerTick);
+    }
+  }
+
+  /**
+   * Play a bell sound using Web Audio API
+   * type: 'change' (pose change) or 'complete' (session end)
+   */
+  function playBell(type = 'change') {
+    if (state.bellEnabled === false) {
+      debug('AUDIO', 'Bell skipped (disabled in settings)');
+      return;
+    }
+    try {
+      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const now = audioContext.currentTime;
+
+      if (type === 'change') {
+        // Short pleasant bell for pose change
+        const osc = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        osc.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc.frequency.value = 800;
+        osc.type = 'sine';
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+
+        osc.start(now);
+        osc.stop(now + 0.2);
+      } else if (type === 'complete') {
+        // Longer celebratory tone for session end
+        const osc1 = audioContext.createOscillator();
+        const osc2 = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+
+        osc1.connect(gain);
+        osc2.connect(gain);
+        gain.connect(audioContext.destination);
+
+        osc1.frequency.value = 800;
+        osc2.frequency.value = 1000;
+        osc1.type = 'sine';
+        osc2.type = 'sine';
+
+        gain.gain.setValueAtTime(0.3, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+
+        osc1.start(now);
+        osc2.start(now + 0.1);
+        osc1.stop(now + 0.4);
+        osc2.stop(now + 0.4);
+      }
+    } catch (e) {
+      debug('AUDIO', 'Web Audio API unavailable', e);
+    }
+  }
+
+  /**
+   * Initialize timer and start with first pose
+   */
+  function startTimer(routineName) {
+    // Check custom routines first
+    const customRoutine = (state.customRoutines || []).find(r => r.name === routineName);
+    const routines = { ...HP_DATA.yogaRoutines, ...HP_DATA.hangboardRoutines };
+    const routine = customRoutine || routines[routineName];
+
+    if (!routine) {
+      error('TIMER', `Invalid routine: ${routineName}`);
+      return;
+    }
+
+    const isCustom = !!customRoutine;
+
+    if (routine.type === 'yoga') {
+      // Build poses array with computed durations
+      const poses = routine.poses.map(pose => ({
+        ...pose,
+        computedDurationMinutes: isCustom ? pose.duration : HP_DATA.getPoseDuration(pose, state.corePoseMinutes)
+      }));
+
+      // Initialize timer state for yoga
+      state.timerState = {
+        timerType: 'yoga',
+        routine: routine,
+        routineName: routineName,
+        poses: poses,
+        currentPoseIndex: 0,
+        poseDurationMs: poses[0].computedDurationMinutes * 60 * 1000,
+        poseStartTime: null,
+        elapsed: 0,
+        isRunning: false,
+        isPaused: true,
+        animFrameId: null,
+        sessionStartTime: Date.now()
+      };
+
+      info('TIMER', `Timer initialized for yoga: ${routineName}`, {
+        poseCount: poses.length,
+        firstPoseDuration: formatTime(state.timerState.poseDurationMs),
+        corePoseMinutes: state.corePoseMinutes
+      });
+
+      renderTimerPose(0);
+      requestWakeLock();
+      startBackgroundTimer();
+      togglePlayPause();
+    } else if (routine.type === 'hangboard') {
+      startHangboardTimer(routineName);
+    } else {
+      error('TIMER', `Unknown routine type: ${routine.type}`);
+    }
+  }
+
+  /**
+   * Initialize hangboard timer by building phases array
+   */
+  function startHangboardTimer(routineName) {
+    const routines = HP_DATA.hangboardRoutines;
+    const routine = routines[routineName];
+
+    if (!routine || routine.type !== 'hangboard') {
+      error('TIMER', `Invalid hangboard routine: ${routineName}`);
+      return;
+    }
+
+    // Build phases array from hangboard structure
+    const phases = [];
+
+    // 1. WARMUP phase
+    phases.push({
+      phaseName: 'WARMUP',
+      phaseClass: 'warmup',
+      grip: null,
+      set: null,
+      totalSets: null,
+      rep: null,
+      totalReps: null,
+      durationMs: routine.warmupSeconds * 1000,
+      description: 'Get warmed up'
+    });
+
+    // 2. For each grip
+    const gripCount = routine.grips.length;
+    const setsTotal = gripCount * routine.setsPerGrip;
+
+    for (let gripIndex = 0; gripIndex < gripCount; gripIndex++) {
+      const grip = routine.grips[gripIndex];
+
+      // For each set
+      for (let setIndex = 0; setIndex < routine.setsPerGrip; setIndex++) {
+        const absoluteSetIndex = gripIndex * routine.setsPerGrip + setIndex;
+        const setNum = setIndex + 1;
+        const totalSetsForGrip = routine.setsPerGrip;
+        const isLastSetOfLastGrip = (gripIndex === gripCount - 1) && (setIndex === routine.setsPerGrip - 1);
+
+        // GET READY phase
+        phases.push({
+          phaseName: 'GET READY',
+          phaseClass: 'getready',
+          grip: grip,
+          set: setNum,
+          totalSets: totalSetsForGrip,
+          rep: null,
+          totalReps: null,
+          durationMs: routine.getReadySeconds * 1000,
+          description: `Set ${setNum} of ${totalSetsForGrip}`
+        });
+
+        // For each rep
+        for (let repIndex = 0; repIndex < routine.repsPerSet; repIndex++) {
+          const repNum = repIndex + 1;
+          const isLastRep = (repIndex === routine.repsPerSet - 1);
+
+          // HANG phase
+          phases.push({
+            phaseName: 'HANG',
+            phaseClass: 'hang',
+            grip: grip,
+            set: setNum,
+            totalSets: totalSetsForGrip,
+            rep: repNum,
+            totalReps: routine.repsPerSet,
+            durationMs: routine.hangSeconds * 1000,
+            description: `Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
+          });
+
+          // REST phase (skip after last rep of set)
+          if (!isLastRep) {
+            phases.push({
+              phaseName: 'REST',
+              phaseClass: 'rest',
+              grip: grip,
+              set: setNum,
+              totalSets: totalSetsForGrip,
+              rep: repNum,
+              totalReps: routine.repsPerSet,
+              durationMs: routine.repRestSeconds * 1000,
+              description: `Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
+            });
+          }
+        }
+
+        // SET REST phase (skip after last set of last grip)
+        if (!isLastSetOfLastGrip) {
+          phases.push({
+            phaseName: 'SET REST',
+            phaseClass: 'warmup',
+            grip: grip,
+            set: setNum,
+            totalSets: totalSetsForGrip,
+            rep: null,
+            totalReps: null,
+            durationMs: routine.setRestSeconds * 1000,
+            description: grip
+          });
+        }
+      }
+    }
+
+    // Initialize timer state for hangboard
+    state.timerState = {
+      timerType: 'hangboard',
+      routine: routine,
+      routineName: routineName,
+      phases: phases,
+      currentPhaseIndex: 0,
+      poseDurationMs: phases[0].durationMs,
+      poseStartTime: null,
+      elapsed: 0,
+      isRunning: false,
+      isPaused: true,
+      animFrameId: null,
+      sessionStartTime: Date.now()
+    };
+
+    info('TIMER', `Hangboard timer initialized: ${routineName}`, {
+      phaseCount: phases.length,
+      gripCount: gripCount,
+      setsPerGrip: routine.setsPerGrip,
+      repsPerSet: routine.repsPerSet,
+      firstPhaseDuration: formatTime(state.timerState.poseDurationMs)
+    });
+
+    renderHangboardPhase(0);
+    requestWakeLock();
+    startBackgroundTimer();
+    togglePlayPause();
+  }
+
+  /**
+   * Update all timer UI elements for current hangboard phase
+   */
+  function renderHangboardPhase(index) {
+    if (!state.timerState || index < 0 || index >= state.timerState.phases.length) {
+      error('TIMER', `Invalid phase index: ${index}`);
+      return;
+    }
+
+    const ts = state.timerState;
+    const phase = ts.phases[index];
+    const totalPhases = ts.phases.length;
+
+    debug('TIMER', `Rendering hangboard phase ${index + 1}/${totalPhases}: ${phase.phaseName}`);
+
+    // Update header
+    document.getElementById('timer-routine-label').textContent = ts.routineName;
+    document.getElementById('timer-pose-counter').textContent = `${index + 1}/${totalPhases}`;
+
+    // Hide pose image (hangboard doesn't use images)
+    document.getElementById('timer-pose-image').style.display = 'none';
+
+    // Update phase name with color class
+    const phaseNameEl = document.getElementById('timer-pose-name');
+    phaseNameEl.innerHTML = `<span class="hb-phase-name ${phase.phaseClass}">${phase.phaseName}</span>`;
+
+    // Update phase description (grip, set/rep info)
+    document.getElementById('timer-pose-desc').textContent = phase.description;
+
+    // Update countdown display
+    document.getElementById('timer-countdown').textContent = formatTime(ts.poseDurationMs);
+
+    // Reset progress bar
+    document.getElementById('timer-progress-fill').style.width = '0%';
+
+    // Update next phase preview
+    const nextEl = document.getElementById('timer-next-pose');
+    if (index + 1 < totalPhases) {
+      const nextPhase = ts.phases[index + 1];
+      const nextGrip = nextPhase.grip ? ` — ${nextPhase.grip}` : '';
+      nextEl.textContent = `Next: ${nextPhase.phaseName}${nextGrip}`;
+    } else {
+      nextEl.textContent = 'Last phase!';
+    }
+
+    // Build progress dots
+    const dotsContainer = document.getElementById('timer-dots');
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalPhases; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      if (i < index) {
+        dot.classList.add('done');
+      } else if (i === index) {
+        dot.classList.add('current');
+      }
+      dotsContainer.appendChild(dot);
+    }
+
+    // Play bell sound for all phase transitions (except the very first phase)
+    if (index > 0) {
+      playBell('change');
+      info('TIMER', `Phase changed: ${phase.phaseName}`);
+    }
+  }
+
+  /**
+   * Update all timer UI elements for current pose
+   */
+  function renderTimerPose(index) {
+    if (!state.timerState || index < 0 || index >= state.timerState.poses.length) {
+      error('TIMER', `Invalid pose index: ${index}`);
+      return;
+    }
+
+    const ts = state.timerState;
+    const pose = ts.poses[index];
+    const totalPoses = ts.poses.length;
+
+    debug('TIMER', `Rendering pose ${index + 1}/${totalPoses}: ${pose.name}`);
+
+    // Update header
+    document.getElementById('timer-routine-label').textContent = ts.routineName;
+    document.getElementById('timer-pose-counter').textContent = `${index + 1}/${totalPoses}`;
+
+    // Update pose info
+    document.getElementById('timer-pose-name').textContent = pose.name;
+    document.getElementById('timer-pose-desc').textContent = pose.description;
+
+    // Show pose photo if available
+    const imageArea = document.getElementById('timer-pose-image');
+    const photo = getPosePhoto(pose.name);
+    if (photo) {
+      imageArea.innerHTML = `<img src="${photo}" alt="${pose.name}">`;
+      imageArea.style.display = 'flex';
+      imageArea.style.border = 'none';
+    } else {
+      imageArea.style.display = 'none';
+    }
+
+    // Update countdown display
+    document.getElementById('timer-countdown').textContent = formatTime(ts.poseDurationMs);
+
+    // Reset progress bar
+    document.getElementById('timer-progress-fill').style.width = '0%';
+
+    // Update next pose preview
+    const nextEl = document.getElementById('timer-next-pose');
+    if (index + 1 < totalPoses) {
+      nextEl.textContent = `Next: ${ts.poses[index + 1].name}`;
+    } else {
+      nextEl.textContent = 'Last pose!';
+    }
+
+    // Build progress dots
+    const dotsContainer = document.getElementById('timer-dots');
+    dotsContainer.innerHTML = '';
+    for (let i = 0; i < totalPoses; i++) {
+      const dot = document.createElement('div');
+      dot.className = 'dot';
+      if (i < index) {
+        dot.classList.add('done');
+      } else if (i === index) {
+        dot.classList.add('current');
+      }
+      dotsContainer.appendChild(dot);
+    }
+
+    // Play bell sound (except for first pose)
+    if (index > 0) {
+      playBell('change');
+      info('TIMER', `Pose changed: ${pose.name}`);
+    }
+  }
+
+  /**
+   * Main timer tick — called via requestAnimationFrame
+   */
+  function timerTick() {
+    if (!state.timerState || !state.timerState.isRunning) {
+      return;
+    }
+
+    const ts = state.timerState;
+    const now = Date.now();
+
+    // Calculate elapsed time since pose started (accounting for pauses)
+    const elapsed = ts.elapsed + (now - ts.poseStartTime);
+    const remaining = ts.poseDurationMs - elapsed;
+
+    // If we've been in background and multiple phases have expired, catch up
+    if (remaining <= 0) {
+      let overflow = -remaining; // extra ms beyond this phase
+      let advanced = false;
+      while (overflow >= 0) {
+        const items = ts.timerType === 'yoga' ? ts.poses : ts.phases;
+        const indexKey = ts.timerType === 'yoga' ? 'currentPoseIndex' : 'currentPhaseIndex';
+        const nextIdx = (ts[indexKey] || ts.currentPoseIndex) + 1;
+
+        if (nextIdx >= items.length) {
+          finishSession();
+          return;
+        }
+
+        // Advance to next
+        if (ts.timerType === 'yoga') {
+          ts.currentPoseIndex = nextIdx;
+          ts.poseDurationMs = ts.poses[nextIdx].computedDurationMinutes * 60 * 1000;
+        } else {
+          ts.currentPhaseIndex = nextIdx;
+          ts.poseDurationMs = ts.phases[nextIdx].durationMs;
+        }
+        advanced = true;
+
+        if (overflow < ts.poseDurationMs) {
+          // We land partway into this phase
+          ts.elapsed = overflow;
+          ts.poseStartTime = now;
+          const renderIdx = ts.timerType === 'yoga' ? ts.currentPoseIndex : ts.currentPhaseIndex;
+          if (ts.timerType === 'yoga') renderTimerPose(renderIdx);
+          else renderHangboardPhase(renderIdx);
+          break;
+        }
+        overflow -= ts.poseDurationMs;
+      }
+
+      if (advanced) {
+        debug('TIMER', 'Caught up after background — advanced through skipped phases');
+      }
+      ts.animFrameId = requestAnimationFrame(timerTick);
+      return;
+    }
+
+    // Update countdown display
+    document.getElementById('timer-countdown').textContent = formatTime(Math.max(0, remaining));
+
+    // Update progress bar
+    const progress = Math.min(100, (elapsed / ts.poseDurationMs) * 100);
+    document.getElementById('timer-progress-fill').style.width = `${progress}%`;
+
+    // Request next frame
+    ts.animFrameId = requestAnimationFrame(timerTick);
+  }
+
+  // Resume timer accurately when returning from background
+  document.addEventListener('visibilitychange', () => {
+    if (!document.hidden && state.timerState && state.timerState.isRunning) {
+      debug('TIMER', 'Page became visible — resuming tick');
+      if (state.timerState.animFrameId) cancelAnimationFrame(state.timerState.animFrameId);
+      state.timerState.animFrameId = requestAnimationFrame(timerTick);
+    }
+  });
+
+  /**
+   * Toggle play/pause
+   */
+  function togglePlayPause() {
+    if (!state.timerState) {
+      error('TIMER', 'Timer not initialized');
+      return;
+    }
+
+    const ts = state.timerState;
+    const playIcon = document.getElementById('icon-play');
+    const pauseIcon = document.getElementById('icon-pause');
+
+    if (ts.isRunning) {
+      // Pause
+      if (ts.animFrameId) {
+        cancelAnimationFrame(ts.animFrameId);
+        ts.animFrameId = null;
+      }
+      ts.elapsed += Date.now() - ts.poseStartTime;
+      ts.poseStartTime = null;
+      ts.isRunning = false;
+
+      playIcon.style.display = 'block';
+      pauseIcon.style.display = 'none';
+      info('TIMER', 'Timer paused');
+    } else {
+      // Play
+      ts.poseStartTime = Date.now();
+      ts.isRunning = true;
+
+      playIcon.style.display = 'none';
+      pauseIcon.style.display = 'block';
+      timerTick();
+      info('TIMER', 'Timer playing');
+    }
+
+    ts.isPaused = !ts.isRunning;
+  }
+
+  /**
+   * Move to next pose or phase
+   */
+  function nextPose() {
+    if (!state.timerState) {
+      error('TIMER', 'Timer not initialized');
+      return;
+    }
+
+    const ts = state.timerState;
+
+    if (ts.timerType === 'yoga') {
+      const nextIndex = ts.currentPoseIndex + 1;
+
+      if (nextIndex >= ts.poses.length) {
+        finishSession();
+        return;
+      }
+
+      // Move to next pose
+      ts.currentPoseIndex = nextIndex;
+      const nextPose = ts.poses[nextIndex];
+      ts.poseDurationMs = nextPose.computedDurationMinutes * 60 * 1000;
+      ts.poseStartTime = Date.now();
+      ts.elapsed = 0;
+
+      renderTimerPose(nextIndex);
+      debug('TIMER', `Advanced to pose ${nextIndex + 1}`);
+
+      if (ts.isRunning) {
+        timerTick();
+      }
+    } else if (ts.timerType === 'hangboard') {
+      const nextIndex = ts.currentPhaseIndex + 1;
+
+      if (nextIndex >= ts.phases.length) {
+        finishSession();
+        return;
+      }
+
+      // Move to next phase
+      ts.currentPhaseIndex = nextIndex;
+      const nextPhase = ts.phases[nextIndex];
+      ts.poseDurationMs = nextPhase.durationMs;
+      ts.poseStartTime = Date.now();
+      ts.elapsed = 0;
+
+      renderHangboardPhase(nextIndex);
+      debug('TIMER', `Advanced to phase ${nextIndex + 1}: ${nextPhase.phaseName}`);
+
+      if (ts.isRunning) {
+        timerTick();
+      }
+    }
+  }
+
+  /**
+   * Go back to previous pose or phase
+   */
+  function prevPose() {
+    if (!state.timerState) {
+      error('TIMER', 'Timer not initialized');
+      return;
+    }
+
+    const ts = state.timerState;
+
+    if (ts.timerType === 'yoga') {
+      if (ts.currentPoseIndex === 0) {
+        // Reset current pose timer
+        ts.poseStartTime = Date.now();
+        ts.elapsed = 0;
+        document.getElementById('timer-countdown').textContent = formatTime(ts.poseDurationMs);
+        document.getElementById('timer-progress-fill').style.width = '0%';
+        info('TIMER', 'Reset current pose timer');
+        return;
+      }
+
+      // Move to previous pose
+      ts.currentPoseIndex--;
+      const prevPose = ts.poses[ts.currentPoseIndex];
+      ts.poseDurationMs = prevPose.computedDurationMinutes * 60 * 1000;
+      ts.poseStartTime = Date.now();
+      ts.elapsed = 0;
+
+      renderTimerPose(ts.currentPoseIndex);
+      debug('TIMER', `Moved back to pose ${ts.currentPoseIndex + 1}`);
+
+      if (ts.isRunning) {
+        timerTick();
+      }
+    } else if (ts.timerType === 'hangboard') {
+      if (ts.currentPhaseIndex === 0) {
+        // Reset current phase timer
+        ts.poseStartTime = Date.now();
+        ts.elapsed = 0;
+        document.getElementById('timer-countdown').textContent = formatTime(ts.poseDurationMs);
+        document.getElementById('timer-progress-fill').style.width = '0%';
+        info('TIMER', 'Reset current phase timer');
+        return;
+      }
+
+      error('SETTINGS', 'Failed to save settings', e);
+    }
+  }
+
+  function initSettings() {
+    // Sync UI with state
+    const slider = document.getElementById('settings-core-slider');
+    const valEl = document.getElementById('settings-core-val');
+    if (slider) slider.value = state.corePoseMinutes;
+    if (valEl) valEl.textContent = `${state.corePoseMinutes}:00`;
+
+    const bellToggle = document.getElementById('toggle-bell');
+    if (bellToggle) bellToggle.classList.toggle('active', state.bellEnabled !== false);
+
+    const wakeLockToggle = document.getElementById('toggle-wakelock');
+    if (wakeLockToggle) wakeLockToggle.classList.toggle('active', state.wakeLockEnabled !== false);
+
+    const sheetsToggle = document.getElementById('toggle-sheets');
+    if (sheetsToggle) sheetsToggle.classList.toggle('active', state.sheetsEnabled === true);
+
+    const sheetsConfig = document.getElementById('sheets-config');
+    if (sheetsConfig) sheetsConfig.style.display = state.sheetsEnabled ? 'block' : 'none';
+
+    const sheetIdEl = document.getElementById('settings-sheet-id');
+    if (sheetIdEl) sheetIdEl.value = state.sheetId || '';
+
+    const sheetTabEl = document.getElementById('settings-sheet-tab');
+    if (sheetTabEl) sheetTabEl.value = state.sheetTab || '';
+
+    debug('SETTINGS', 'Settings screen initialized');
+  }
+
+  // ============================================
+  // SUPABASE DATA SYNC
+  // ============================================
+
+  // --- Settings ---
+  async function loadSettingsFromDB() {
+    loadSettings(); // Load from localStorage immediately
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      const { data, error: dbErr } = await supabase
+        .from('user_settings')
+        .select('*')
+        .eq('user_id', state.user.id)
+        .single();
+
+      if (dbErr && dbErr.code !== 'PGRST116') { // PGRST116 = no rows
+        warn('DB', 'Failed to load settings from DB', dbErr.message);
+        return;
+      }
+
+      if (data) {
+        state.corePoseMinutes = data.core_pose_minutes ?? 5;
+        state.bellEnabled = data.bell_enabled ?? true;
+        state.wakeLockEnabled = data.wake_lock_enabled ?? true;
+        state.sheetsEnabled = data.sheets_enabled ?? false;
+        state.sheetId = data.sheet_id ?? '';
+        state.sheetTab = data.sheet_tab ?? '';
+        info('DB', 'Settings loaded from Supabase');
+        // Sync back to localStorage
+        saveSettings();
+      } else {
+        // No DB record yet, push localStorage settings to DB
+        await saveSettingsToDB();
+      }
+    } catch (e) {
+      warn('DB', 'Settings DB load error', e.message);
+    }
+  }
+
+  async function saveSettingsToDB() {
+    saveSettings(); // Always save to localStorage
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      const { error: dbErr } = await supabase
+        .from('user_settings')
+        .upsert({
+          user_id: state.user.id,
+          core_pose_minutes: state.corePoseMinutes,
+          bell_enabled: state.bellEnabled,
+          wake_lock_enabled: state.wakeLockEnabled,
+          sheets_enabled: state.sheetsEnabled,
+          sheet_id: state.sheetId,
+          sheet_tab: state.sheetTab,
+          updated_at: new Date().toISOString()
+        });
+      if (dbErr) warn('DB', 'Failed to save settings to DB', dbErr.message);
+      else debug('DB', 'Settings saved to Supabase');
+    } catch (e) {
+      warn('DB', 'Settings DB save error', e.message);
+    }
+  }
+
+  // --- Session History ---
+  async function loadSessionHistoryFromDB() {
+    loadSessionHistory(); // Load from localStorage immediately
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      const { data, error: dbErr } = await supabase
+        .from('session_history')
+        .select('*')
+        .eq('user_id', state.user.id)
+        .order('created_at', { ascending: false })
+        .limit(200);
+
+      if (dbErr) {
+        warn('DB', 'Failed to load history from DB', dbErr.message);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        state.sessionHistory = data.map(row => ({
+          id: row.id,
+          date: row.created_at,
+          routineName: row.routine_name,
+          durationMin: row.duration_min,
+          coreTime: row.core_time,
+          completed: row.completed,
+          type: row.type
+        }));
+        info('DB', `Loaded ${data.length} sessions from Supabase`);
+        // Sync to localStorage
+        try {
+          const key = `hp_history_${state.user?.email || 'anon'}`;
+          localStorage.setItem(key, JSON.stringify(state.sessionHistory));
+        } catch (e) { /* ignore */ }
+      }
+    } catch (e) {
+      warn('DB', 'History DB load error', e.message);
+    }
+  }
+
+  async function saveSessionToDB(session) {
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      const { error: dbErr } = await supabase
+        .from('session_history')
+        .insert({
+          user_id: state.user.id,
+          routine_name: session.routineName,
+          duration_min: session.durationMin,
+          core_time: session.coreTime || null,
+          completed: session.completed || null,
+          type: session.type || 'yoga'
+        });
+      if (dbErr) warn('DB', 'Failed to save session to DB', dbErr.message);
+      else info('DB', `Session saved to Supabase: ${session.routineName}`);
+    } catch (e) {
+      warn('DB', 'Session DB save error', e.message);
+    }
+  }
+
+  // --- Custom Routines ---
+  async function loadCustomRoutinesFromDB() {
+    loadCustomRoutines(); // Load from localStorage immediately
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      const { data, error: dbErr } = await supabase
+        .from('custom_routines')
+        .select('*')
+        .eq('user_id', state.user.id)
+        .order('created_at', { ascending: true });
+
+      if (dbErr) {
+        warn('DB', 'Failed to load custom routines from DB', dbErr.message);
+        return;
+      }
+
+      if (data && data.length > 0) {
+        state.customRoutines = data.map(row => ({
+          id: row.id,
+          name: row.name,
+          focus: row.focus,
+          type: row.type || 'yoga',
+          poses: row.poses || [],
+          isPublic: row.is_public,
+          createdAt: row.created_at
+        }));
+        info('DB', `Loaded ${data.length} custom routines from Supabase`);
+        saveCustomRoutines(); // Sync to localStorage
+      } else if (state.customRoutines.length > 0) {
+        // Push localStorage routines to DB
+        for (const routine of state.customRoutines) {
+          await saveCustomRoutineToDB(routine);
+        }
+        info('DB', `Pushed ${state.customRoutines.length} local routines to Supabase`);
+      }
+    } catch (e) {
+      warn('DB', 'Custom routines DB load error', e.message);
+    }
+  }
+
+  async function saveCustomRoutineToDB(routine) {
+    if (!supabase || !state.user?.id) return;
+
+    try {
+      if (routine.id) {
+        // Update existing
+        const { error: dbErr } = await supabase
+          .from('custom_routines')
+          .update({
+            name: routine.name,
+            focus: routine.focus,
+            type: routine.type || 'yoga',
+            poses: routine.poses,
+            is_public: routine.isPublic || false,
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', routine.id);
+        if (dbErr) warn('DB', 'Failed to update routine in DB', dbErr.message);
+        else debug('DB', `Routine updated in Supabase: ${routine.name}`);
+      } else {
+        // Insert new
+        const { data, error: dbErr } = await supabase
+          .from('custom_routines')
+          .insert({
+            user_id: state.user.id,
+            name: routine.name,
+            focus: routine.focus,
+            type: routine.type || 'yoga',
+            poses: routine.poses,
+            is_public: routine.isPublic || false
+          })
+          .select('id')
+          .single();
+        if (dbErr) warn('DB', 'Failed to insert routine to DB', dbErr.message);
+        else {
+          routine.id = data.id;
+          debug('DB', `Routine saved to Supabase: ${routine.name}`);
+        }
+      }
+    } catch (e) {
+      warn('DB', 'Routine DB save error', e.message);
+    }
+  }
+
+  async function deleteCustomRoutineFromDB(routineId) {
+    if (!supabase || !routineId) return;
+
+    try {
+      const { error: dbErr } = await supabase
+        .from('custom_routines')
+        .delete()
+        .eq('id', routineId);
+      if (dbErr) warn('DB', 'Failed to delete routine from DB', dbErr.message);
+      else debug('DB', `Routine deleted from Supabase: ${routineId}`);
+    } catch (e) {
+      warn('DB', 'Routine DB delete error', e.message);
+    }
+  }
+
+  // --- Community Routines ---
+  async function loadCommunityRoutines() {
+    if (!supabase) return [];
+
+    try {
+      const { data, error: dbErr } = await supabase
+        .from('community_routines')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      if (dbErr) {
+        warn('DB', 'Failed to load community routines', dbErr.message);
+        return [];
+      }
+
+      info('DB', `Loaded ${(data || []).length} community routines`);
+      return data || [];
+    } catch (e) {
+      warn('DB', 'Community routines load error', e.message);
+      return [];
+    }
+  }
+
+  async function shareRoutineToCommunity(routine) {
+    if (!supabase || !state.user?.id) return false;
+
+    try {
+      const { error: dbErr } = await supabase
+        .from('community_routines')
+        .insert({
+          creator_id: state.user.id,
+          creator_name: state.user.displayName || 'Anonymous',
+          name: routine.name,
+          focus: routine.focus || '',
+          type: routine.type || 'yoga',
+          poses: routine.poses,
+          description: routine.focus || ''
+        });
+      if (dbErr) {
+        warn('DB', 'Failed to share routine', dbErr.message);
+        return false;
+      }
+      info('DB', `Routine shared to community: ${routine.name}`);
+      return true;
+    } catch (e) {
+      warn('DB', 'Share routine error', e.message);
+      return false;
+    }
+  }
+
+  // ============================================
+  // COMMUNITY ROUTINES SCREEN
+  // ============================================
+
+  async function renderCommunityScreen() {
+    debug('RENDER', 'Rendering Community Routines screen');
+    const listEl = document.getElementById('community-list');
+    if (!listEl) return;
+
+    listEl.innerHTML = '<div class="empty-state">Loading community routines...</div>';
+
+    const routines = await loadCommunityRoutines();
+
+    if (!routines || routines.length === 0) {
+      listEl.innerHTML = `
+        <div class="empty-state">
+          No community routines yet. Be the first to share one!<br><br>
+          Go to <strong>My Routines</strong>, create a custom routine, then tap <strong>Share</strong>.
+        </div>
+      `;
+      return;
+    }
+
+    listEl.innerHTML = '';
+
+    routines.forEach(cr => {
+      const poses = Array.isArray(cr.poses) ? cr.poses : [];
+      const totalMin = poses.reduce((s, p) => s + (p.duration || 0), 0);
+      const card = document.createElement('div');
+      card.className = 'my-routine-card';
+      card.innerHTML = `
+        <div class="my-routine-top">
+          <div class="my-routine-name">${cr.name}</div>
+          <span class="my-routine-badge" style="background:var(--accent);color:#fff;font-size:0.7rem;">Community</span>
+        </div>
+        <div class="my-routine-meta">${cr.type || 'Yoga'} · ${poses.length} poses · ${Math.round(totalMin)} min</div>
+        <div class="my-routine-meta" style="opacity:0.6;font-size:0.75rem;">by ${cr.creator_name || 'Anonymous'}${cr.description ? ' — ' + cr.description : ''}</div>
+        <div class="my-routine-actions">
+          <button class="btn-routine-action btn-add-community" data-id="${cr.id}">+ Add to My Routines</button>
+        </div>
+      `;
+      listEl.appendChild(card);
+    });
+
+    // Bind "Add to My Routines" buttons
+    listEl.querySelectorAll('.btn-add-community').forEach(btn => {
+      btn.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        const crId = e.currentTarget.dataset.id;
+        const cr = routines.find(r => r.id === crId);
+        if (!cr) return;
+
+        // Check if already added
+        const alreadyExists = state.customRoutines.some(r => r.name === cr.name);
+        if (alreadyExists) {
+          alert(`"${cr.name}" is already in your routines.`);
+          return;
+        }
+
+        // Add as a custom routine
+        const newRoutine = {
+          name: cr.name,
+          focus: cr.description || cr.focus || '',
+          poses: Array.isArray(cr.poses) ? cr.poses : []
+        };
+
+        state.customRoutines.push(newRoutine);
+        saveCustomRoutines();
+        await saveCustomRoutineToDB(newRoutine);
+
+        // Increment add_count on community routine
+        if (supabase) {
+          try {
+            await supabase
+              .from('community_routines')
+              .update({ add_count: (cr.add_count || 0) + 1 })
+              .eq('id', crId);
+          } catch (e) {
+            debug('DB', 'Failed to increment add_count', e.message);
+          }
+        }
+
+        alert(`"${cr.name}" added to your routines!`);
+        info('COMMUNITY', `Added community routine: ${cr.name}`);
+      });
+    });
+
+    info('RENDER', `Rendered ${routines.length} community routines`);
+  }
+
+  // ============================================
+  // MY ROUTINES
+  // ============================================
+
+  function renderMyRoutines() {
+    debug('RENDER', 'Rendering My Routines screen');
+    const listEl = document.getElementById('my-routines-list');
+    if (!listEl) return;
+    listEl.innerHTML = '';
+
+    // Built-in yoga routines
+    Object.entries(HP_DATA.yogaRoutines).forEach(([name, routine]) => {
+      const duration = HP_DATA.calcYogaDuration(routine, state.corePoseMinutes);
+      const card = document.createElement('div');
+      card.className = 'my-routine-card';
+      card.innerHTML = `
+        <div class="my-routine-top">
+          <div class="my-routine-name">${name}</div>
+          <span class="my-routine-badge badge-builtin">Built-in</span>
+        </div>
+        <div class="my-routine-meta">Yoga · ${routine.poses.length} poses · ${duration} min</div>
+      `;
+      card.addEventListener('click', () => {
+        state.selectedRoutine = name;
+        renderDetail(name, routine);
+      });
+      listEl.appendChild(card);
+    });
+
+    // Built-in hangboard routines
+    Object.entries(HP_DATA.hangboardRoutines).forEach(([name, routine]) => {
+      const duration = HP_DATA.calcHangboardDuration(routine);
+      const card = document.createElement('div');
+      card.className = 'my-routine-card';
+      card.innerHTML = `
+        <div class="my-routine-top">
+          <div class="my-routine-name">${name}</div>
+          <span class="my-routine-badge badge-builtin">Built-in</span>
+        </div>
+        <div class="my-routine-meta">Hangboard · ${routine.grips.length} grips · ${duration} min</div>
+      `;
+      card.addEventListener('click', () => {
+        state.selectedRoutine = name;
+        renderDetail(name, routine);
+      });
+      listEl.appendChild(card);
+    });
+
+    // Custom routines
+    if (state.customRoutines && state.customRoutines.length > 0) {
+      state.customRoutines.forEach((routine, idx) => {
+        const totalMin = routine.poses.reduce((s, p) => s + p.duration, 0);
+        const card = document.createElement('div');
+        card.className = 'my-routine-card';
+        card.innerHTML = `
+          <div class="my-routine-top">
+            <div class="my-routine-name">${routine.name}</div>
+            <span class="my-routine-badge badge-custom">Custom</span>
+          </div>
+          <div class="my-routine-meta">Yoga · ${routine.poses.length} poses · ${Math.round(totalMin)} min</div>
+          <div class="my-routine-actions">
+            <button class="btn-routine-action btn-edit-custom" data-idx="${idx}">Edit</button>
+            <button class="btn-routine-action btn-share-custom" data-idx="${idx}">Share</button>
+            <button class="btn-routine-action danger btn-delete-custom" data-idx="${idx}">Delete</button>
+          </div>
+        `;
+
+        // Tap card (not actions) to open detail
+        card.addEventListener('click', (e) => {
+          if (e.target.closest('.my-routine-actions')) return;
+          state.selectedRoutine = routine.name;
+          // Build a compatible routine object for renderDetail
+          const compat = {
+            type: 'yoga',
+            focus: routine.focus || '',
+            poses: routine.poses,
+            _isCustom: true,
+            _customIndex: idx
+          };
+          renderDetail(routine.name, compat);
+        });
+
+        listEl.appendChild(card);
+      });
+
+      // Bind edit/delete
+      listEl.querySelectorAll('.btn-edit-custom').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          openRoutineBuilder(parseInt(e.currentTarget.dataset.idx));
+        });
+      });
+
+      listEl.querySelectorAll('.btn-share-custom').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const idx = parseInt(e.currentTarget.dataset.idx);
+          const routine = state.customRoutines[idx];
+          if (!routine) return;
+          if (confirm(`Share "${routine.name}" to the community? Others will be able to add it to their routines.`)) {
+            const ok = await shareRoutineToCommunity(routine);
+            if (ok) {
+              alert(`"${routine.name}" shared to community!`);
+              info('COMMUNITY', `Shared routine: ${routine.name}`);
+            } else {
+              alert('Failed to share routine. Please try again.');
+            }
+          }
+        });
+      });
+
+      listEl.querySelectorAll('.btn-delete-custom').forEach(btn => {
+        btn.addEventListener('click', async (e) => {
+          e.stopPropagation();
+          const idx = parseInt(e.currentTarget.dataset.idx);
+          const routine = state.customRoutines[idx];
+          const name = routine?.name;
+          if (confirm(`Delete "${name}"?`)) {
+            // Delete from Supabase if it has a DB id
+            if (routine?.id) {
+              await deleteCustomRoutineFromDB(routine.id);
+            }
+            state.customRoutines.splice(idx, 1);
+            saveCustomRoutines();
+            renderMyRoutines();
+            info('BUILDER', `Deleted custom routine: "${name}"`);
+          }
+        });
+      });
+    }
+
+    const customCount = (state.customRoutines || []).length;
+    info('RENDER', `Rendered My Routines: ${Object.keys(HP_DATA.yogaRoutines).length} yoga + ${Object.keys(HP_DATA.hangboardRoutines).length} hangboard + ${customCount} custom`);
+  }
+
+  // ============================================
+  // POSE PHOTOS
+  // ============================================
+
+  function loadPosePhotos() {
+    try {
+      const key = `hp_photos_${state.user?.email || 'anon'}`;
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        state.posePhotos = JSON.parse(saved);
+        info('PHOTOS', `Loaded ${Object.keys(state.posePhotos).length} pose photos`);
+      } else {
+        state.posePhotos = {};
+        debug('PHOTOS', 'No saved pose photos');
+      }
+    } catch (e) {
+      error('PHOTOS', 'Failed to load pose photos', e);
+      state.posePhotos = {};
+    }
+  }
+
+  function savePosePhotos() {
+    try {
+      const key = `hp_photos_${state.user?.email || 'anon'}`;
+      localStorage.setItem(key, JSON.stringify(state.posePhotos || {}));
+      debug('PHOTOS', 'Pose photos saved');
+    } catch (e) {
+      error('PHOTOS', 'Failed to save pose photos (storage might be full)', e);
+    }
+  }
+
+  function getUniquePoseNames() {
+    const names = new Set();
+    Object.values(HP_DATA.yogaRoutines).forEach(routine => {
+      routine.poses.forEach(pose => {
+        names.add(pose.name);
+      });
+    });
+    return Array.from(names).sort();
+  }
+
+  function renderPhotoGrid() {
+    const grid = document.getElementById('photo-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const allPoses = getUniquePoseNames();
+    const filter = state.photoFilter || 'all';
+    const photos = state.posePhotos || {};
+
+    const filtered = allPoses.filter(name => {
+      if (filter === 'assigned') return photos[name];
+      if (filter === 'empty') return !photos[name];
+      return true;
+    });
+
+    filtered.forEach(poseName => {
+      const hasPhoto = !!photos[poseName];
+      const card = document.createElement('div');
+      card.className = 'photo-card';
+
+      if (hasPhoto) {
+        card.innerHTML = `
+          <div class="photo-card-image">
+            <img src="${photos[poseName]}" alt="${poseName}">
+            <button class="photo-remove" data-pose="${poseName}">×</button>
+          </div>
+          <div class="photo-card-name">${poseName}</div>
+        `;
+      } else {
+        card.innerHTML = `
+          <div class="photo-card-image">
+            <div class="photo-placeholder">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+              <span>Tap to add</span>
+            </div>
+          </div>
+          <div class="photo-card-name">${poseName}</div>
+        `;
+      }
+
+      // Tap to add/replace photo
+      card.querySelector('.photo-card-image').addEventListener('click', (e) => {
+        if (e.target.closest('.photo-remove')) return; // Don't trigger on remove button
+        state.editingPoseName = poseName;
+        document.getElementById('photo-file-input').click();
+        debug('PHOTOS', `Opening file picker for "${poseName}"`);
+      });
+
+      // Remove photo
+      const removeBtn = card.querySelector('.photo-remove');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const name = e.currentTarget.dataset.pose;
+          delete state.posePhotos[name];
+          savePosePhotos();
+          renderPhotoGrid();
+          info('PHOTOS', `Photo removed for "${name}"`);
+        });
+      }
+
+      grid.appendChild(card);
+    });
+
+    debug('RENDER', `Photo grid: ${filtered.length} poses (${filter} filter)`);
+  }
+
+  function getPosePhoto(poseName) {
+    return (state.posePhotos && state.posePhotos[poseName]) || null;
+  }
+
+  // ============================================
+  // CUSTOM ROUTINE BUILDER
+  // ============================================
+
+  let builderPoses = [];
+  let editingRoutineIndex = -1; // -1 = new routine
+
+  function openRoutineBuilder(editIndex) {
+    editingRoutineIndex = editIndex !== undefined ? editIndex : -1;
+    const isEdit = editingRoutineIndex >= 0;
+
+    document.getElementById('builder-title').textContent = isEdit ? 'Edit Routine' : 'New Routine';
+
+    if (isEdit && state.customRoutines[editingRoutineIndex]) {
+      const routine = state.customRoutines[editingRoutineIndex];
+      document.getElementById('builder-name').value = routine.name || '';
+      document.getElementById('builder-focus').value = routine.focus || '';
+      builderPoses = routine.poses.map(p => ({ ...p }));
+    } else {
+      document.getElementById('builder-name').value = '';
+      document.getElementById('builder-focus').value = '';
+      builderPoses = [
+        { name: 'Pose 1', duration: 5, isCore: true },
+        { name: 'Pose 2', duration: 5, isCore: true },
+        { name: 'Savasana', duration: 3, isSavasana: true }
+      ];
+    }
+
+    renderBuilderPoses();
+    showScreen('screen-builder');
+    debug('BUILDER', `Opened routine builder (${isEdit ? 'editing' : 'new'})`);
+  }
+
+  function addBuilderPose() {
+    // Insert before savasana if it exists, otherwise at end
+    const savasanaIdx = builderPoses.findIndex(p => p.isSavasana);
+    const newPose = { name: 'New Pose', duration: 5, isCore: true };
+    if (savasanaIdx >= 0) {
+      builderPoses.splice(savasanaIdx, 0, newPose);
+    } else {
+      builderPoses.push(newPose);
+    }
+    renderBuilderPoses();
+    debug('BUILDER', `Added pose (total: ${builderPoses.length})`);
+  }
+
+  function removeBuilderPose(index) {
+    if (builderPoses.length <= 1) return;
+    builderPoses.splice(index, 1);
+    renderBuilderPoses();
+    debug('BUILDER', `Removed pose at index ${index}`);
+  }
+
+  function renderBuilderPoses() {
+    const list = document.getElementById('builder-pose-list');
+    if (!list) return;
+    list.innerHTML = '';
+
+    builderPoses.forEach((pose, i) => {
+      const item = document.createElement('div');
+      item.className = 'builder-pose-item';
+      item.innerHTML = `
+        <span class="drag-handle">☰</span>
+        <div class="builder-pose-info">
+          <input type="text" value="${pose.name}" data-index="${i}" data-field="name" placeholder="Pose name">
+        </div>
+        <div class="builder-pose-dur">
+          <input type="number" value="${pose.duration}" data-index="${i}" data-field="duration" min="0.25" max="30" step="0.25">
+          <span>min</span>
+        </div>
+        <button class="builder-pose-remove" data-index="${i}">×</button>
+      `;
+      list.appendChild(item);
+    });
+
+    // Bind change listeners
+    list.querySelectorAll('input').forEach(input => {
+      input.addEventListener('change', (e) => {
+        const idx = parseInt(e.target.dataset.index);
+        const field = e.target.dataset.field;
+        if (field === 'name') {
+          builderPoses[idx].name = e.target.value;
+        } else if (field === 'duration') {
+          builderPoses[idx].duration = parseFloat(e.target.value) || 1;
+        }
+      });
+    });
+
+    // Bind remove listeners
+    list.querySelectorAll('.builder-pose-remove').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        removeBuilderPose(parseInt(e.currentTarget.dataset.index));
+      });
+    });
+  }
+
+  function saveCustomRoutine() {
+    const name = document.getElementById('builder-name').value.trim();
+    const focus = document.getElementById('builder-focus').value.trim();
+
+    if (!name) {
+      alert('Please enter a routine name.');
+      return;
+    }
+
+    if (builderPoses.length < 2) {
+      alert('Add at least 2 poses.');
+      return;
+    }
+
+    // Sync any unsaved input values
+    document.querySelectorAll('#builder-pose-list input').forEach(input => {
+      const idx = parseInt(input.dataset.index);
+      const field = input.dataset.field;
+      if (field === 'name') builderPoses[idx].name = input.value;
+      if (field === 'duration') builderPoses[idx].duration = parseFloat(input.value) || 1;
+    });
+
+    const routine = {
+      name,
+      focus,
+      type: 'yoga',
+      poses: builderPoses.map(p => ({
+        name: p.name,
+        duration: p.duration,
+        description: '',
+        isCore: p.isSavasana ? false : true,
+        isSavasana: p.isSavasana || false
+      })),
+      createdAt: new Date().toISOString()
+    };
+
+    if (!state.customRoutines) state.customRoutines = [];
+
+    if (editingRoutineIndex >= 0) {
+      routine.id = state.customRoutines[editingRoutineIndex]?.id; // Preserve DB id
+      state.customRoutines[editingRoutineIndex] = routine;
+      info('BUILDER', `Updated custom routine: "${name}"`);
+    } else {
+      state.customRoutines.push(routine);
+      info('BUILDER', `Created custom routine: "${name}" with ${builderPoses.length} poses`);
+    }
+
+    saveCustomRoutines();
+    saveCustomRoutineToDB(routine);
+    renderMyRoutines();
+    showScreen('screen-my-routines');
+  }
+
+  function loadCustomRoutines() {
+    try {
+      const key = `hp_custom_${state.user?.email || 'anon'}`;
+      const saved = localStorage.getItem(key);
+      if (saved) {
+        state.customRoutines = JSON.parse(saved);
+        info('STORAGE', `Loaded ${state.customRoutines.length} custom routines`);
+      } else {
+        state.customRoutines = [];
+      }
+    } catch (e) {
+      error('STORAGE', 'Failed to load custom routines', e);
+      state.customRoutines = [];
+    }
+  }
+
+  function saveCustomRoutines() {
+    try {
+      const key = `hp_custom_${state.user?.email || 'anon'}`;
+      localStorage.setItem(key, JSON.stringify(state.customRoutines || []));
+      debug('STORAGE', 'Custom routines saved');
+    } catch (e) {
+      error('STORAGE', 'Failed to save custom routines', e);
+    }
+  }
+
+  // ============================================
+  // INITIALIZATION
+  // ============================================
+  async function init() {
+    info('APP', '=== HoldPoint v0.1.0 starting ===');
+    info('APP', `Timestamp: ${new Date().toISOString()}`);
+    info('APP', `User agent: ${navigator.userAgent}`);
+    debug('APP', 'Initializing event listeners');
+
+    // Login form
+    document.getElementById('login-form')?.addEventListener('submit', handleLogin);
+    document.getElementById('signup-form')?.addEventListener('submit', handleSignup);
+
+    // Show signup / show login links
+    document.getElementById('show-signup')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      debug('NAV', 'User clicked "Sign up" link');
+      showScreen('screen-signup');
+    });
+    document.getElementById('show-login')?.addEventListener('click', (e) => {
+      e.preventDefault();
+      debug('NAV', 'User clicked "Sign in" link');
+      showScreen('screen-login');
+    });
+
+    // Workout type tabs
+    document.querySelectorAll('.tab-pill').forEach(pill => {
+      pill.addEventListener('click', () => setWorkoutType(pill.dataset.type));
+    });
+
+    // Core time buttons
+    document.getElementById('btn-time-down')?.addEventListener('click', () => adjustCoreTime(-1));
+    document.getElementById('btn-time-up')?.addEventListener('click', () => adjustCoreTime(1));
+
+    // Detail back button
+    document.getElementById('btn-detail-back')?.addEventListener('click', () => {
+      debug('NAV', 'Back from detail');
+      showScreen('screen-home');
+    });
+
+    // Start routine button
+    document.getElementById('btn-start-routine')?.addEventListener('click', () => {
+      info('TIMER', `Starting routine: ${state.selectedRoutine}`);
+      startTimer(state.selectedRoutine);
+      showScreen('screen-timer');
+    });
+
+    // Bottom nav
+    document.querySelectorAll('.nav-item').forEach(item => {
+      item.addEventListener('click', () => {
+        const screen = item.dataset.screen;
+        debug('NAV', `Nav tap: ${screen}`);
+        if (screen === 'screen-history') renderHistory();
+        showScreen(screen);
+      });
+    });
+
+    // Avatar → profile
+    document.getElementById('app-avatar')?.addEventListener('click', () => {
+      debug('NAV', 'Avatar tapped → profile');
+      showScreen('screen-profile');
+    });
+
+    // Profile menu items
+    document.getElementById('btn-my-routines')?.addEventListener('click', () => {
+      debug('NAV', 'My Routines tapped');
+      renderMyRoutines();
+      showScreen('screen-my-routines');
+    });
+    document.getElementById('btn-manage-photos')?.addEventListener('click', () => {
+      debug('NAV', 'Manage Photos tapped');
+      renderPhotoGrid();
+      showScreen('screen-photos');
+    });
+    document.getElementById('btn-settings')?.addEventListener('click', () => {
+      debug('NAV', 'Settings tapped');
+      initSettings();
+      showScreen('screen-settings');
+    });
+    document.getElementById('btn-share-routine')?.addEventListener('click', () => {
+      debug('NAV', 'Community Routines tapped');
+      showScreen('screen-community');
+      renderCommunityScreen();
+    });
+    document.getElementById('btn-logout')?.addEventListener('click', handleLogout);
+
+    // Settings back
+    document.getElementById('btn-settings-back')?.addEventListener('click', () => {
+      showScreen('screen-profile');
+    });
+
+    // Settings: core pose slider
+    document.getElementById('settings-core-slider')?.addEventListener('input', (e) => {
+      const val = parseInt(e.target.value);
+      state.corePoseMinutes = val;
+      document.getElementById('settings-core-val').textContent = `${val}:00`;
+      document.getElementById('core-time-value').textContent = `${val}:00`;
+      saveSettingsToDB();
+      renderRoutines();
+    });
+
+    // Settings: toggle bell
+    document.getElementById('toggle-bell')?.addEventListener('click', (e) => {
+      const toggle = e.currentTarget;
+      toggle.classList.toggle('active');
+      state.bellEnabled = toggle.classList.contains('active');
+      saveSettingsToDB();
+      debug('SETTINGS', `Bell sound ${state.bellEnabled ? 'enabled' : 'disabled'}`);
+    });
+
+    // Settings: toggle wake lock
+    document.getElementById('toggle-wakelock')?.addEventListener('click', (e) => {
+      const toggle = e.currentTarget;
+      toggle.classList.toggle('active');
+      state.wakeLockEnabled = toggle.classList.contains('active');
+      saveSettingsToDB();
+      debug('SETTINGS', `Wake lock ${state.wakeLockEnabled ? 'enabled' : 'disabled'}`);
+    });
+
+    // Settings: toggle google sheets
+    document.getElementById('toggle-sheets')?.addEventListener('click', (e) => {
+      const toggle = e.currentTarget;
+      toggle.classList.toggle('active');
+      state.sheetsEnabled = toggle.classList.contains('active');
+      const configEl = document.getElementById('sheets-config');
+      if (configEl) configEl.style.display = state.sheetsEnabled ? 'block' : 'none';
+      saveSettingsToDB();
+      debug('SETTINGS', `Google Sheets ${state.sheetsEnabled ? 'enabled' : 'disabled'}`);
+    });
+
+    // Settings: sheet ID and tab name save on blur
+    document.getElementById('settings-sheet-id')?.addEventListener('blur', (e) => {
+      state.sheetId = e.target.value.trim();
+      saveSettingsToDB();
+      debug('SETTINGS', `Sheet ID saved: ${state.sheetId}`);
+    });
+
+    document.getElementById('settings-sheet-tab')?.addEventListener('blur', (e) => {
+      state.sheetTab = e.target.value.trim();
+      saveSettingsToDB();
+      debug('SETTINGS', `Sheet tab saved: ${state.sheetTab}`);
+    });
+
+    // Settings: clear history
+    document.getElementById('btn-clear-history')?.addEventListener('click', async () => {
+      if (confirm('Delete all session history? This cannot be undone.')) {
+        state.sessionHistory = [];
+        try {
+          const key = `hp_history_${state.user?.email || 'anon'}`;
+          localStorage.removeItem(key);
+          info('SETTINGS', 'Session history cleared from localStorage');
+        } catch (e) {
+          error('SETTINGS', 'Failed to clear local history', e);
+        }
+        // Also clear from Supabase
+        if (supabase && state.user?.id) {
+          try {
+            const { error: dbErr } = await supabase
+              .from('session_history')
+              .delete()
+              .eq('user_id', state.user.id);
+            if (dbErr) warn('DB', 'Failed to clear history from DB', dbErr.message);
+            else info('DB', 'Session history cleared from Supabase');
+          } catch (e) {
+            warn('DB', 'History DB clear error', e.message);
+          }
+        }
+        // Show confirmation
+        alert('Session history cleared.');
+      }
+    });
+
+    // My Routines back
+    document.getElementById('btn-my-routines-back')?.addEventListener('click', () => {
+      showScreen('screen-profile');
+    });
+
+    // Create custom routine
+    document.getElementById('btn-create-routine')?.addEventListener('click', () => {
+      debug('NAV', 'Create Routine tapped');
+      openRoutineBuilder();
+    });
+
+    // Community back
+    document.getElementById('btn-community-back')?.addEventListener('click', () => {
+      showScreen('screen-profile');
+    });
+
+    // Photos back
+    document.getElementById('btn-photos-back')?.addEventListener('click', () => {
+      showScreen('screen-profile');
+    });
+
+    // Photo filters
+    document.querySelectorAll('.photo-filter-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        document.querySelectorAll('.photo-filter-btn').forEach(b => b.classList.remove('active'));
+        e.currentTarget.classList.add('active');
+        state.photoFilter = e.currentTarget.dataset.filter;
+        renderPhotoGrid();
+      });
+    });
+
+    // Photo file input handler
+    document.getElementById('photo-file-input')?.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file || !state.editingPoseName) return;
+
+      const reader = new FileReader();
+      reader.onload = function(event) {
+        // Resize image to max 400px to save localStorage space
+        const img = new Image();
+        img.onload = function() {
+          const canvas = document.createElement('canvas');
+          const maxSize = 400;
+          let w = img.width;
+          let h = img.height;
+          if (w > h) {
+            if (w > maxSize) { h = h * maxSize / w; w = maxSize; }
+          } else {
+            if (h > maxSize) { w = w * maxSize / h; h = maxSize; }
+          }
+          canvas.width = w;
+          canvas.height = h;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, w, h);
+          const dataUrl = canvas.toDataURL('image/jpeg', 0.7);
+
+          // Save to state and localStorage
+          if (!state.posePhotos) state.posePhotos = {};
+          state.posePhotos[state.editingPoseName] = dataUrl;
+          savePosePhotos();
+          renderPhotoGrid();
+          info('PHOTOS', `Photo saved for "${state.editingPoseName}"`);
+        };
+        img.src = event.target.result;
+      };
+      reader.readAsDataURL(file);
+      e.target.value = ''; // Reset input
+    });
+
+    // Builder back
+    document.getElementById('btn-builder-back')?.addEventListener('click', () => {
+      showScreen('screen-my-routines');
+      renderMyRoutines();
+    });
+
+    // Builder add pose
+    document.getElementById('btn-builder-add-pose')?.addEventListener('click', () => {
+      addBuilderPose();
+    });
+
+    // Builder save
+    document.getElementById('btn-save-routine')?.addEventListener('click', () => {
+      saveCustomRoutine();
+    });
+
+    // Timer close button
+    document.getElementById('btn-timer-close')?.addEventListener('click', () => {
+      if (state.timerState?.isRunning) {
+        if (confirm('Leave workout? Progress will be lost.')) {
+          if (state.timerState?.animFrameId) {
+            cancelAnimationFrame(state.timerState.animFrameId);
+          }
+          stopBackgroundTimer();
+          releaseWakeLock();
+          state.timerState = null;
+          info('TIMER', 'Session abandoned by user');
+          showScreen('screen-home');
+        }
+      } else {
+        debug('NAV', 'Timer close tapped');
+        stopBackgroundTimer();
+        releaseWakeLock();
+        state.timerState = null;
+        showScreen('screen-home');
+      }
+    });
+
+    // Timer control buttons
+    document.getElementById('btn-timer-play')?.addEventListener('click', togglePlayPause);
+    document.getElementById('btn-timer-prev')?.addEventListener('click', prevPose);
+    document.getElementById('btn-timer-next')?.addEventListener('click', nextPose);
+
+    // Check for existing session (async — Supabase session check)
+    const hasSession = await loadUserFromStorage();
+    if (hasSession) {
+      info('APP', 'Existing session found, skipping login');
+      await onLoginSuccess();
+    } else {
+      info('APP', 'No session found, showing login');
+      showScreen('screen-login');
+    }
+
+    info('APP', '=== HoldPoint initialized ===');
+  }
+
+  // ============================================
+  // PUBLIC API
+  // ============================================
+  return {
+    init,
+    exportLogs,
+    getState: () => ({ ...state }),
+    getLogHistory: () => [...logHistory]
+  };
+})();
+
+// Boot the app
+document.addEventListener('DOMContentLoaded', HP.init);
+  </script>
+</body>
+</html>

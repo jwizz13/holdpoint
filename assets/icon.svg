@@ -1,0 +1,20 @@
+<svg viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg" fill="none" stroke="#2d6a4f" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Light green background with rounded corners -->
+  <rect x="0" y="0" width="512" height="512" rx="51" ry="51" fill="#f0f7f0"/>
+  
+  <!-- Mountain outline (scaled from 4,40 24,10 44,40) -->
+  <polyline points="77,281 281,44 485,281" fill="none"/>
+  
+  <!-- Snow cap notch (scaled from 19,18 22,22 26,22 29,18) -->
+  <polyline points="222,156 260,200 304,200 343,156" fill="none" stroke-width="7.5"/>
+  
+  <!-- Pine tree on right slope -->
+  <!-- Trunk (36,38 to 36,24) -->
+  <line x1="420" y1="427" x2="420" y2="267"/>
+  
+  <!-- Top branch (32,32 36,27 40,32) -->
+  <polyline points="288,356 420,300 552,356" fill="none"/>
+  
+  <!-- Bottom branch (33,29 36,24.5 39,29) -->
+  <polyline points="305,322 420,272 535,322" fill="none"/>
+</svg>

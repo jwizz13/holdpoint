@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="HoldPoint">
+  <meta name="theme-color" content="#2d5016">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="assets/icon-192.png">
+  <title>HoldPoint</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+
+  <!-- ============================================ -->
+  <!-- LOGIN SCREEN                                 -->
+  <!-- ============================================ -->
+  <div id="screen-login" class="screen screen-auth">
+    <div class="auth-bg"></div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Mountain outline -->
+            <polyline points="4,40 24,10 44,40" fill="none"/>
+            <!-- Snow cap notch -->
+            <polyline points="19,18 22,22 26,22 29,18" fill="none" stroke-width="1.5"/>
+            <!-- Pine tree on right slope -->
+            <line x1="36" y1="38" x2="36" y2="24"/>
+            <polyline points="32,32 36,27 40,32" fill="none"/>
+            <polyline points="33,29 36,24.5 39,29" fill="none"/>
+          </svg>
+        </div>
+        <h1 class="auth-title">HoldPoint</h1>
+        <p class="auth-tagline">Train and Track</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+            <input class="form-input" id="login-email" type="email" placeholder="Email address" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <input class="form-input" id="login-password" type="password" placeholder="Password" autocomplete="current-password">
+          </div>
+        </div>
+        <div class="forgot-link"><a href="#">Forgot password?</a></div>
+        <div id="login-error" class="form-error"></div>
+        <button type="submit" class="btn-auth">Sign In</button>
+      </form>
+      <div class="auth-switch">Don't have an account? <a id="show-signup" href="#">Sign up</a></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SIGNUP SCREEN                                -->
+  <!-- ============================================ -->
+  <div id="screen-signup" class="screen screen-auth">
+    <div class="auth-bg"></div>
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="logo-mark">
+          <svg viewBox="0 0 48 48" fill="none" stroke="#2d6a4f" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Mountain outline -->
+            <polyline points="4,40 24,10 44,40" fill="none"/>
+            <!-- Snow cap notch -->
+            <polyline points="19,18 22,22 26,22 29,18" fill="none" stroke-width="1.5"/>
+            <!-- Pine tree on right slope -->
+            <line x1="36" y1="38" x2="36" y2="24"/>
+            <polyline points="32,32 36,27 40,32" fill="none"/>
+            <polyline points="33,29 36,24.5 39,29" fill="none"/>
+          </svg>
+        </div>
+        <h1 class="auth-title">Join HoldPoint</h1>
+        <p class="auth-tagline">Create your free account</p>
+      </div>
+
+      <form id="signup-form">
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <input class="form-input" id="signup-name" type="text" placeholder="Full name" autocomplete="name">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+            <input class="form-input" id="signup-email" type="email" placeholder="Email address" autocomplete="email">
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="input-with-icon">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+            <input class="form-input" id="signup-password" type="password" placeholder="Password (6+ characters)" autocomplete="new-password">
+          </div>
+        </div>
+        <div id="signup-error" class="form-error"></div>
+        <button type="submit" class="btn-auth">Create Account</button>
+      </form>
+      <div class="auth-switch">Already have an account? <a id="show-login" href="#">Sign in</a></div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HOME SCREEN                                  -->
+  <!-- ============================================ -->
+  <div id="screen-home" class="screen">
+    <div class="app-header">
+      <div class="app-title">HoldPoint</div>
+      <div class="app-avatar" id="app-avatar" data-user-initials>??</div>
+    </div>
+    <div class="app-subtitle">Timed hold workouts</div>
+
+    <div class="workout-tabs">
+      <button class="tab-pill active" data-type="yoga">Yin Yoga</button>
+      <button class="tab-pill" data-type="hangboard">Hangboard</button>
+    </div>
+
+    <div id="core-time-control" class="time-control">
+      <div class="time-control-label">Core Pose Time</div>
+      <div class="time-row">
+        <button class="time-btn" id="btn-time-down">−</button>
+        <div class="time-value" id="core-time-value">5:00</div>
+        <button class="time-btn" id="btn-time-up">+</button>
+      </div>
+    </div>
+
+    <div id="routine-list" class="routine-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- ROUTINE DETAIL SCREEN                        -->
+  <!-- ============================================ -->
+  <div id="screen-detail" class="screen">
+    <button class="detail-back" id="btn-detail-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      Back
+    </button>
+
+    <div id="detail-title" class="detail-title"></div>
+    <div id="detail-meta" class="detail-meta"></div>
+    <div id="detail-focus" class="detail-focus"></div>
+
+    <button class="btn-start" id="btn-start-routine">Start Routine</button>
+
+    <div id="pose-list" class="pose-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- TIMER SCREEN (Yoga)                          -->
+  <!-- ============================================ -->
+  <div id="screen-timer" class="screen screen-timer">
+    <div class="timer-top">
+      <button class="timer-close" id="btn-timer-close">✕</button>
+      <div class="timer-routine-label" id="timer-routine-label">Routine</div>
+      <div class="timer-pose-counter" id="timer-pose-counter" style="font-size:14px;color:#94a3b8;">1/22</div>
+    </div>
+
+    <!-- Pose image area -->
+    <div class="pose-image-area" id="timer-pose-image">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+      <span>Pose photo</span>
+    </div>
+
+    <!-- Pose info -->
+    <div class="timer-pose-name" id="timer-pose-name">Pose Name</div>
+    <div class="timer-pose-desc" id="timer-pose-desc">Description</div>
+
+    <!-- Countdown -->
+    <div class="timer-countdown" id="timer-countdown">5:00</div>
+
+    <!-- Progress bar for current pose -->
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="timer-progress-fill"></div>
+    </div>
+
+    <!-- Next pose preview -->
+    <div id="timer-next-pose" style="text-align:center;color:#94a3b8;font-size:13px;margin-bottom:20px;">Next: Pose Name</div>
+
+    <!-- Controls: prev, play/pause, next -->
+    <div class="timer-controls">
+      <button class="ctrl-btn ctrl-prev" id="btn-timer-prev">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6l8.5 6V6z"/></svg>
+      </button>
+      <button class="ctrl-btn ctrl-play" id="btn-timer-play">
+        <svg id="icon-play" width="36" height="36" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,3 20,12 6,21"/></svg>
+        <svg id="icon-pause" width="36" height="36" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="5" y="3" width="4" height="18"/><rect x="15" y="3" width="4" height="18"/></svg>
+      </button>
+      <button class="ctrl-btn ctrl-next" id="btn-timer-next">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
+    </div>
+
+    <!-- Progress dots -->
+    <div class="progress-dots" id="timer-dots"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- HISTORY SCREEN                               -->
+  <!-- ============================================ -->
+  <div id="screen-history" class="screen">
+    <div class="history-title">History</div>
+
+    <div class="history-stats" id="history-stats">
+      <div class="stat-card">
+        <div class="stat-num" id="stat-sessions">0</div>
+        <div class="stat-label">Sessions</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-hours">0</div>
+        <div class="stat-label">Hours</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num" id="stat-week">0</div>
+        <div class="stat-label">This Week</div>
+      </div>
+    </div>
+
+    <div id="history-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- PROFILE SCREEN                               -->
+  <!-- ============================================ -->
+  <div id="screen-profile" class="screen">
+    <div class="profile-avatar-lg" data-user-initials>??</div>
+    <div class="profile-name" id="profile-name">User</div>
+    <div class="profile-email" id="profile-email">user@email.com</div>
+
+    <div class="profile-menu-item" id="btn-my-routines">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+        </div>
+        <div class="profile-menu-text">My Routines</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-manage-photos">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-blue">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+        </div>
+        <div class="profile-menu-text">Manage Pose Photos</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-settings">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-amber">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83-2.83l.06-.06A1.65 1.65 0 004.68 15a1.65 1.65 0 00-1.51-1H3a2 2 0 010-4h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 012.83-2.83l.06.06A1.65 1.65 0 009 4.68a1.65 1.65 0 001-1.51V3a2 2 0 014 0v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 2.83l-.06.06A1.65 1.65 0 0019.4 9a1.65 1.65 0 001.51 1H21a2 2 0 010 4h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+        </div>
+        <div class="profile-menu-text">Settings</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-share-routine">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-green">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        </div>
+        <div class="profile-menu-text">Community Routines</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+
+    <div class="profile-menu-item" id="btn-logout">
+      <div class="profile-menu-left">
+        <div class="profile-menu-icon pmi-red">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </div>
+        <div class="profile-menu-text">Sign Out</div>
+      </div>
+      <div class="profile-menu-arrow">›</div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- SETTINGS SCREEN                              -->
+  <!-- ============================================ -->
+  <div id="screen-settings" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-settings-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Settings</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Yoga Timer</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Core Pose Time</div>
+            <div class="settings-sublabel">Duration for main poses (1–10 min)</div>
+          </div>
+          <div class="slider-control">
+            <span class="settings-value" id="settings-core-val">5:00</span>
+            <input type="range" id="settings-core-slider" min="1" max="10" value="5">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Sound & Alerts</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Bell Sound</div>
+            <div class="settings-sublabel">Play chime on pose changes</div>
+          </div>
+          <button class="toggle-switch active" id="toggle-bell"></button>
+        </div>
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Keep Screen On</div>
+            <div class="settings-sublabel">Prevents sleep during workouts</div>
+          </div>
+          <button class="toggle-switch active" id="toggle-wakelock"></button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Google Sheets</div>
+      <div class="settings-card">
+        <div class="settings-row">
+          <div>
+            <div class="settings-label">Auto-Log Sessions</div>
+            <div class="settings-sublabel">Log completed workouts to a spreadsheet</div>
+          </div>
+          <button class="toggle-switch" id="toggle-sheets"></button>
+        </div>
+        <div id="sheets-config" style="display: none; border-top: 1px solid var(--card-border); padding-top: 12px; margin-top: 12px;">
+          <div style="margin-bottom: 8px;">
+            <label style="font-size: 12px; color: var(--text-light);">Web App URL</label>
+            <input type="text" id="settings-sheets-url" placeholder="Paste your Apps Script web app URL" style="width: 100%; padding: 8px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 14px; margin-top: 4px; background: var(--input-bg);">
+          </div>
+          <div style="margin-bottom: 12px;">
+            <label style="font-size: 12px; color: var(--text-light);">Tab Name</label>
+            <input type="text" id="settings-sheet-tab" placeholder="e.g. Daily View" style="width: 100%; padding: 8px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-size: 14px; margin-top: 4px; background: var(--input-bg);">
+          </div>
+          <button class="settings-btn" id="btn-test-sheets" style="margin-bottom: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+            Test Connection
+          </button>
+          <button class="settings-btn" id="btn-sync-history-sheets" style="margin-bottom: 8px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><polyline points="23 20 23 14 17 14"/><path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15"/></svg>
+            Sync History to Sheet
+          </button>
+          <button class="settings-btn" id="btn-sheets-setup" style="font-size:12px;opacity:0.7;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+            Setup Instructions
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-section-label">Data</div>
+      <button class="settings-btn danger" id="btn-clear-history">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 01-2 2H7a2 2 0 01-2-2V6m3 0V4a2 2 0 012-2h4a2 2 0 012 2v2"/></svg>
+        Clear Session History
+      </button>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- MY ROUTINES SCREEN                           -->
+  <!-- ============================================ -->
+  <div id="screen-my-routines" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-my-routines-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">My Routines</div>
+    </div>
+
+    <button class="btn-create-routine" id="btn-create-routine">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Create Custom Routine
+    </button>
+
+    <div id="my-routines-list"></div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- COMMUNITY ROUTINES SCREEN                    -->
+  <!-- ============================================ -->
+  <div id="screen-community" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-community-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Community Routines</div>
+    </div>
+
+    <div id="community-list">
+      <div class="empty-state">
+        Community routines will be available once Supabase is connected. Share your own routines and discover what others have created!
+      </div>
+    </div>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- MANAGE POSE PHOTOS SCREEN                    -->
+  <!-- ============================================ -->
+  <div id="screen-photos" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-photos-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title">Pose Photos</div>
+    </div>
+
+    <div class="photo-filter-row" id="photo-filters">
+      <button class="photo-filter-btn active" data-filter="all">All</button>
+      <button class="photo-filter-btn" data-filter="assigned">Has Photo</button>
+      <button class="photo-filter-btn" data-filter="empty">No Photo</button>
+    </div>
+
+    <div id="photo-grid" class="photo-grid"></div>
+
+    <input type="file" id="photo-file-input" accept="image/*" style="display:none">
+  </div>
+
+  <!-- ============================================ -->
+  <!-- CUSTOM ROUTINE BUILDER SCREEN                -->
+  <!-- ============================================ -->
+  <div id="screen-builder" class="screen">
+    <div class="sub-screen-header">
+      <button class="btn-back" id="btn-builder-back">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div class="sub-screen-title" id="builder-title">New Routine</div>
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Routine Name</div>
+      <input type="text" class="builder-input" id="builder-name" placeholder="e.g. Morning Flow">
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Focus / Description</div>
+      <input type="text" class="builder-input" id="builder-focus" placeholder="e.g. Hip openers and backbends">
+    </div>
+
+    <div class="builder-section">
+      <div class="builder-label">Poses</div>
+      <div id="builder-pose-list" class="builder-pose-list"></div>
+      <button class="btn-add-pose" id="btn-builder-add-pose">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Pose
+      </button>
+    </div>
+
+    <button class="btn-save-routine" id="btn-save-routine">Save Routine</button>
+  </div>
+
+  <!-- ============================================ -->
+  <!-- BOTTOM NAV                                   -->
+  <!-- ============================================ -->
+  <nav id="bottom-nav" class="bottom-nav hidden">
+    <button class="nav-item" data-screen="screen-home">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/></svg>
+      Home
+    </button>
+    <button class="nav-item" data-screen="screen-history">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      History
+    </button>
+    <button class="nav-item" data-screen="screen-profile">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      Profile
+    </button>
+  </nav>
+
+  <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
