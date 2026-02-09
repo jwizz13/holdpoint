@@ -133,6 +133,8 @@ const HP_DATA = (() => {
       type: 'hangboard',
       description: '3 sets each grip, 7s hang / 3s rest, 6 reps per set',
       grips: ['20mm Edge', 'Slopers'],
+      singleArmGrips: ['Slopers'],
+      switchSeconds: 5,
       warmupSeconds: 300,
       getReadySeconds: 5,
       hangSeconds: 7,

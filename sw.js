@@ -1,11 +1,11 @@
-// HoldPoint Service Worker v2.0
-const CACHE_NAME = 'holdpoint-v3';
+// HoldPoint Service Worker v3.0
+const CACHE_NAME = 'holdpoint-v4';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './css/styles.css',
-  './js/data.js?v=2',
-  './js/app.js?v=2',
+  './js/data.js?v=3',
+  './js/app.js?v=3',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './manifest.json'

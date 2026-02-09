@@ -563,49 +563,129 @@ const HP = (() => {
       list.appendChild(warmupItem);
 
       // Grip sets with rest rows between them
+      const singleArmGrips = routine.singleArmGrips || [];
+      const switchSec = routine.switchSeconds || 5;
       const totalGripSets = routine.grips.length * routine.setsPerGrip;
       let absoluteSet = 0;
 
+      // One arm's rep time (no get-ready): reps × hang + (reps-1) × repRest
+      const oneArmRepSeconds = (routine.repsPerSet * routine.hangSeconds)
+        + ((routine.repsPerSet - 1) * routine.repRestSeconds);
+
       routine.grips.forEach((grip, i) => {
+        const isSingleArm = singleArmGrips.includes(grip);
+
         for (let set = 1; set <= routine.setsPerGrip; set++) {
           absoluteSet++;
-          itemNum++;
 
-          // Precise set time: reps × hang + (reps-1) × repRest + getReady
-          const setSeconds = routine.getReadySeconds
-            + (routine.repsPerSet * routine.hangSeconds)
-            + ((routine.repsPerSet - 1) * routine.repRestSeconds);
-
-          const item = document.createElement('div');
-          item.className = 'pose-item';
-          item.innerHTML = `
-            <div class="pose-item-row">
-              <div class="pose-number">${itemNum}</div>
-              <div class="pose-item-info">
-                <div class="pose-item-name">${grip} — Set ${set}</div>
-                <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
-              </div>
-            </div>
-            <div class="pose-item-time">${fmtSec(setSeconds)}</div>
-          `;
-          list.appendChild(item);
-
-          // Set rest row (between sets, not after the last one)
-          if (absoluteSet < totalGripSets) {
+          if (isSingleArm) {
+            // --- Right hand set ---
             itemNum++;
-            const restItem = document.createElement('div');
-            restItem.className = 'pose-item';
-            restItem.innerHTML = `
+            const rightSetSeconds = routine.getReadySeconds + oneArmRepSeconds;
+            const rightItem = document.createElement('div');
+            rightItem.className = 'pose-item';
+            rightItem.innerHTML = `
               <div class="pose-item-row">
                 <div class="pose-number">${itemNum}</div>
                 <div class="pose-item-info">
-                  <div class="pose-item-name">Set Rest</div>
-                  <div class="pose-item-desc">Recovery between sets</div>
+                  <div class="pose-item-name">${grip} (Right) — Set ${set}</div>
+                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
                 </div>
               </div>
-              <div class="pose-item-time">${fmtSec(routine.setRestSeconds)}</div>
+              <div class="pose-item-time">${fmtSec(rightSetSeconds)}</div>
             `;
-            list.appendChild(restItem);
+            list.appendChild(rightItem);
+
+            // --- Switch row ---
+            itemNum++;
+            const switchItem = document.createElement('div');
+            switchItem.className = 'pose-item';
+            switchItem.innerHTML = `
+              <div class="pose-item-row">
+                <div class="pose-number">${itemNum}</div>
+                <div class="pose-item-info">
+                  <div class="pose-item-name">Switch Hands</div>
+                  <div class="pose-item-desc">Switch to left hand</div>
+                </div>
+              </div>
+              <div class="pose-item-time">${fmtSec(switchSec)}</div>
+            `;
+            list.appendChild(switchItem);
+
+            // --- Left hand set ---
+            itemNum++;
+            const leftItem = document.createElement('div');
+            leftItem.className = 'pose-item';
+            leftItem.innerHTML = `
+              <div class="pose-item-row">
+                <div class="pose-number">${itemNum}</div>
+                <div class="pose-item-info">
+                  <div class="pose-item-name">${grip} (Left) — Set ${set}</div>
+                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+                </div>
+              </div>
+              <div class="pose-item-time">${fmtSec(oneArmRepSeconds)}</div>
+            `;
+            list.appendChild(leftItem);
+
+            // --- Adjusted set rest ---
+            if (absoluteSet < totalGripSets) {
+              const adjustedRestSec = routine.setRestSeconds - switchSec - oneArmRepSeconds;
+              if (adjustedRestSec > 0) {
+                itemNum++;
+                const restItem = document.createElement('div');
+                restItem.className = 'pose-item';
+                restItem.innerHTML = `
+                  <div class="pose-item-row">
+                    <div class="pose-number">${itemNum}</div>
+                    <div class="pose-item-info">
+                      <div class="pose-item-name">Set Rest</div>
+                      <div class="pose-item-desc">Recovery (3:00 minus left set)</div>
+                    </div>
+                  </div>
+                  <div class="pose-item-time">${fmtSec(adjustedRestSec)}</div>
+                `;
+                list.appendChild(restItem);
+              }
+            }
+          } else {
+            // --- Normal two-hand grip ---
+            itemNum++;
+            const setSeconds = routine.getReadySeconds
+              + (routine.repsPerSet * routine.hangSeconds)
+              + ((routine.repsPerSet - 1) * routine.repRestSeconds);
+
+            const item = document.createElement('div');
+            item.className = 'pose-item';
+            item.innerHTML = `
+              <div class="pose-item-row">
+                <div class="pose-number">${itemNum}</div>
+                <div class="pose-item-info">
+                  <div class="pose-item-name">${grip} — Set ${set}</div>
+                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+                </div>
+              </div>
+              <div class="pose-item-time">${fmtSec(setSeconds)}</div>
+            `;
+            list.appendChild(item);
+
+            // Set rest row (between sets, not after the last one)
+            if (absoluteSet < totalGripSets) {
+              itemNum++;
+              const restItem = document.createElement('div');
+              restItem.className = 'pose-item';
+              restItem.innerHTML = `
+                <div class="pose-item-row">
+                  <div class="pose-number">${itemNum}</div>
+                  <div class="pose-item-info">
+                    <div class="pose-item-name">Set Rest</div>
+                    <div class="pose-item-desc">Recovery between sets</div>
+                  </div>
+                </div>
+                <div class="pose-item-time">${fmtSec(routine.setRestSeconds)}</div>
+              `;
+              list.appendChild(restItem);
+            }
           }
         }
       });
@@ -892,78 +972,141 @@ const HP = (() => {
 
     // 2. For each grip
     const gripCount = routine.grips.length;
-    const setsTotal = gripCount * routine.setsPerGrip;
+    const singleArmGrips = routine.singleArmGrips || [];
+    const switchSec = routine.switchSeconds || 5;
 
-    for (let gripIndex = 0; gripIndex < gripCount; gripIndex++) {
-      const grip = routine.grips[gripIndex];
+    // Helper: push one arm's worth of HANG/REST reps
+    function pushReps(grip, setNum, totalSetsForGrip, side) {
+      const label = side ? `${side} · ` : '';
+      for (let repIndex = 0; repIndex < routine.repsPerSet; repIndex++) {
+        const repNum = repIndex + 1;
+        const isLastRep = (repIndex === routine.repsPerSet - 1);
 
-      // For each set
-      for (let setIndex = 0; setIndex < routine.setsPerGrip; setIndex++) {
-        const absoluteSetIndex = gripIndex * routine.setsPerGrip + setIndex;
-        const setNum = setIndex + 1;
-        const totalSetsForGrip = routine.setsPerGrip;
-        const isLastSetOfLastGrip = (gripIndex === gripCount - 1) && (setIndex === routine.setsPerGrip - 1);
-
-        // GET READY phase
         phases.push({
-          phaseName: 'GET READY',
-          phaseClass: 'getready',
-          grip: grip,
+          phaseName: 'HANG',
+          phaseClass: 'hang',
+          grip: side ? `${grip} (${side})` : grip,
           set: setNum,
           totalSets: totalSetsForGrip,
-          rep: null,
-          totalReps: null,
-          durationMs: routine.getReadySeconds * 1000,
-          description: `Set ${setNum} of ${totalSetsForGrip}`
+          rep: repNum,
+          totalReps: routine.repsPerSet,
+          durationMs: routine.hangSeconds * 1000,
+          description: `${label}Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
         });
 
-        // For each rep
-        for (let repIndex = 0; repIndex < routine.repsPerSet; repIndex++) {
-          const repNum = repIndex + 1;
-          const isLastRep = (repIndex === routine.repsPerSet - 1);
-
-          // HANG phase
+        if (!isLastRep) {
           phases.push({
-            phaseName: 'HANG',
-            phaseClass: 'hang',
-            grip: grip,
+            phaseName: 'REST',
+            phaseClass: 'rest',
+            grip: side ? `${grip} (${side})` : grip,
             set: setNum,
             totalSets: totalSetsForGrip,
             rep: repNum,
             totalReps: routine.repsPerSet,
-            durationMs: routine.hangSeconds * 1000,
-            description: `Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
+            durationMs: routine.repRestSeconds * 1000,
+            description: `${label}Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
+          });
+        }
+      }
+    }
+
+    for (let gripIndex = 0; gripIndex < gripCount; gripIndex++) {
+      const grip = routine.grips[gripIndex];
+      const isSingleArm = singleArmGrips.includes(grip);
+
+      for (let setIndex = 0; setIndex < routine.setsPerGrip; setIndex++) {
+        const setNum = setIndex + 1;
+        const totalSetsForGrip = routine.setsPerGrip;
+        const isLastSetOfLastGrip = (gripIndex === gripCount - 1) && (setIndex === routine.setsPerGrip - 1);
+
+        if (isSingleArm) {
+          // --- SINGLE-ARM GRIP (e.g. Slopers): Right → Switch → Left → Adjusted Rest ---
+
+          // GET READY for right hand
+          phases.push({
+            phaseName: 'GET READY',
+            phaseClass: 'getready',
+            grip: `${grip} (Right)`,
+            set: setNum,
+            totalSets: totalSetsForGrip,
+            rep: null,
+            totalReps: null,
+            durationMs: routine.getReadySeconds * 1000,
+            description: `Right · Set ${setNum} of ${totalSetsForGrip}`
           });
 
-          // REST phase (skip after last rep of set)
-          if (!isLastRep) {
-            phases.push({
-              phaseName: 'REST',
-              phaseClass: 'rest',
-              grip: grip,
-              set: setNum,
-              totalSets: totalSetsForGrip,
-              rep: repNum,
-              totalReps: routine.repsPerSet,
-              durationMs: routine.repRestSeconds * 1000,
-              description: `Rep ${repNum} of ${routine.repsPerSet} · Set ${setNum} of ${totalSetsForGrip}`
-            });
-          }
-        }
+          // Right hand reps
+          pushReps(grip, setNum, totalSetsForGrip, 'Right');
 
-        // SET REST phase (skip after last set of last grip)
-        if (!isLastSetOfLastGrip) {
+          // SWITCH to left hand
           phases.push({
-            phaseName: 'SET REST',
-            phaseClass: 'warmup',
+            phaseName: 'SWITCH',
+            phaseClass: 'getready',
+            grip: `${grip} (Left)`,
+            set: setNum,
+            totalSets: totalSetsForGrip,
+            rep: null,
+            totalReps: null,
+            durationMs: switchSec * 1000,
+            description: `Switch to left hand · Set ${setNum} of ${totalSetsForGrip}`
+          });
+
+          // Left hand reps
+          pushReps(grip, setNum, totalSetsForGrip, 'Left');
+
+          // SET REST — 3 min starts when right arm finishes,
+          // so subtract switch + left set time from total rest
+          if (!isLastSetOfLastGrip) {
+            const leftSetMs = (routine.repsPerSet * routine.hangSeconds +
+              (routine.repsPerSet - 1) * routine.repRestSeconds) * 1000;
+            const adjustedRestMs = (routine.setRestSeconds * 1000) - (switchSec * 1000) - leftSetMs;
+            if (adjustedRestMs > 0) {
+              phases.push({
+                phaseName: 'SET REST',
+                phaseClass: 'warmup',
+                grip: grip,
+                set: setNum,
+                totalSets: totalSetsForGrip,
+                rep: null,
+                totalReps: null,
+                durationMs: adjustedRestMs,
+                description: grip
+              });
+            }
+          }
+        } else {
+          // --- NORMAL TWO-HAND GRIP ---
+
+          // GET READY phase
+          phases.push({
+            phaseName: 'GET READY',
+            phaseClass: 'getready',
             grip: grip,
             set: setNum,
             totalSets: totalSetsForGrip,
             rep: null,
             totalReps: null,
-            durationMs: routine.setRestSeconds * 1000,
-            description: grip
+            durationMs: routine.getReadySeconds * 1000,
+            description: `Set ${setNum} of ${totalSetsForGrip}`
           });
+
+          // Normal reps (no side label)
+          pushReps(grip, setNum, totalSetsForGrip, null);
+
+          // SET REST phase (skip after last set of last grip)
+          if (!isLastSetOfLastGrip) {
+            phases.push({
+              phaseName: 'SET REST',
+              phaseClass: 'warmup',
+              grip: grip,
+              set: setNum,
+              totalSets: totalSetsForGrip,
+              rep: null,
+              totalReps: null,
+              durationMs: routine.setRestSeconds * 1000,
+              description: grip
+            });
+          }
         }
       }
     }
