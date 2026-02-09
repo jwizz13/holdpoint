@@ -1106,14 +1106,41 @@ const HP = (() => {
     ts.animFrameId = requestAnimationFrame(timerTick);
   }
 
-  // Resume timer accurately when returning from background
+  // Resume timer accurately when returning from background / alerts / notifications
+  function ensureTimerRunning(reason) {
+    if (!state.timerState || !state.timerState.isRunning) return;
+    debug('TIMER', `Ensuring timer alive — ${reason}`);
+    if (state.timerState.animFrameId) cancelAnimationFrame(state.timerState.animFrameId);
+    state.timerState.animFrameId = requestAnimationFrame(timerTick);
+  }
+
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && state.timerState && state.timerState.isRunning) {
-      debug('TIMER', 'Page became visible — resuming tick');
-      if (state.timerState.animFrameId) cancelAnimationFrame(state.timerState.animFrameId);
-      state.timerState.animFrameId = requestAnimationFrame(timerTick);
-    }
+    if (!document.hidden) ensureTimerRunning('page became visible');
   });
+
+  // Backup: focus event catches notification banners and alerts that
+  // may not trigger visibilitychange (especially on iOS PWA)
+  window.addEventListener('focus', () => ensureTimerRunning('window regained focus'));
+
+  // Backup: pageshow fires when page is restored from bfcache
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) ensureTimerRunning('restored from bfcache');
+  });
+
+  // Watchdog: every 2 seconds, verify rAF loop is alive when timer should be running.
+  // If the rAF chain died (uncaught error, weird browser state), restart it.
+  setInterval(() => {
+    if (!state.timerState || !state.timerState.isRunning || document.hidden) return;
+    const ts = state.timerState;
+    const now = Date.now();
+    const elapsed = ts.elapsed + (now - ts.poseStartTime);
+    const remaining = ts.poseDurationMs - elapsed;
+    // If phase should have ended >1s ago and we're visible, rAF loop is dead — restart
+    if (remaining < -1000) {
+      warn('TIMER', 'Watchdog: timer appears stuck, restarting tick loop');
+      ensureTimerRunning('watchdog detected stuck timer');
+    }
+  }, 2000);
 
   /**
    * Toggle play/pause
