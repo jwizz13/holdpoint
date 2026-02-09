@@ -1,14 +1,14 @@
-// HoldPoint Service Worker v1.0
-const CACHE_NAME = 'holdpoint-v1';
+// HoldPoint Service Worker v2.0
+const CACHE_NAME = 'holdpoint-v3';
 const ASSETS_TO_CACHE = [
-  '/',
-  '/index.html',
-  '/css/styles.css',
-  '/js/data.js',
-  '/js/app.js',
-  '/assets/icon-192.png',
-  '/assets/icon-512.png',
-  '/manifest.json'
+  './',
+  './index.html',
+  './css/styles.css',
+  './js/data.js?v=2',
+  './js/app.js?v=2',
+  './assets/icon-192.png',
+  './assets/icon-512.png',
+  './manifest.json'
 ];
 
 // Install: cache core assets

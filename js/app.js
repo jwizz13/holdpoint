@@ -1,6 +1,6 @@
 /**
  * HoldPoint — Main Application
- * Version: 0.1.0 (Step 1: UI Shell + Navigation)
+ * Version: 0.2.0 (Audio fix + timer hardening)
  *
  * Logging is built into every layer. To view logs:
  *   - Open browser console (F12 or Cmd+Option+I)
@@ -23,6 +23,8 @@ const HP = (() => {
   } catch (e) {
     console.error('[HP] Failed to initialize Supabase client:', e);
   }
+
+  console.log('%c[HP] HoldPoint v0.2.0 loaded', 'color: green; font-weight: bold;');
 
   // ============================================
   // LOGGING SYSTEM
@@ -89,7 +91,7 @@ const HP = (() => {
     bellEnabled: true,
     wakeLockEnabled: true,
     sheetsEnabled: true,
-    sheetsUrl: 'https://script.google.com/macros/s/AKfycbxMlhZiqnD2f7UQk23M02lnJ1IX7p-XJOCPTPCffdKISDZIzoHQ9vbPJG5TnsBlLCQ/exec',
+    sheetsUrl: '',
     sheetId: '1PLM_8mN82UuHeP2aIEqAps0FlGRC1k-EiSPArSCMoMo',
     sheetTab: 'Daily View',
     customRoutines: [],
@@ -705,6 +707,62 @@ const HP = (() => {
   }
 
   /**
+   * Persistent AudioContext — created once, unlocked on user gesture.
+   * iOS/mobile suspends new AudioContexts created without a touch event,
+   * so we reuse one and resume it before each bell.
+   */
+  let _audioCtx = null;
+
+  function getAudioContext() {
+    if (!_audioCtx) {
+      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      debug('AUDIO', 'AudioContext created, state: ' + _audioCtx.state);
+    }
+    // Resume if iOS suspended it
+    if (_audioCtx.state === 'suspended') {
+      _audioCtx.resume().then(() => debug('AUDIO', 'AudioContext resumed'));
+    }
+    return _audioCtx;
+  }
+
+  // Unlock audio on ANY user gesture so timer bells work later.
+  // Also plays through a hidden <audio> element to bypass iOS silent mode switch.
+  function unlockAudio() {
+    const ctx = getAudioContext();
+    if (ctx.state === 'suspended') {
+      ctx.resume().then(() => debug('AUDIO', 'AudioContext unlocked via gesture'));
+    }
+    // Play a silent buffer through Web Audio to fully unlock on iOS
+    const buf = ctx.createBuffer(1, 1, 22050);
+    const src = ctx.createBufferSource();
+    src.buffer = buf;
+    src.connect(ctx.destination);
+    src.start(0);
+
+    // Also play a tiny silent audio via HTML5 Audio to switch iOS audio session
+    // category — this allows Web Audio to play even when the mute switch is on
+    if (!window._silentAudioPlayed) {
+      try {
+        const silentDataUri = 'data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRBqpAAAAAAD/+1DEAAAHAAGf9AAAIiuJs/80YBIAAAA0gAAAAAAAAAA/8AAAAUBwfB8HwfB8EAQBA4P/ygIAgCAIHB8Hw//KAgCAI8HwfB8EAQBAEAQBA4Pg+D4Pg+D4AAAAAA//tQxBcAAADSAAAAAAAAANIAAAAASZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA//tQxC0AAADSAAAAAAAAANIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=';
+        const audio = new Audio(silentDataUri);
+        audio.play().then(() => {
+          debug('AUDIO', 'HTML5 silent audio played (silent-mode bypass)');
+        }).catch(() => {});
+        window._silentAudioPlayed = true;
+      } catch (e) {
+        debug('AUDIO', 'HTML5 silent audio failed', e);
+      }
+    }
+
+    debug('AUDIO', 'unlockAudio() complete');
+  }
+
+  // Attach unlock to common gestures — NOT once, so repeated taps re-unlock
+  ['touchstart', 'touchend', 'click'].forEach(evt => {
+    document.addEventListener(evt, unlockAudio, { once: false, passive: true });
+  });
+
+  /**
    * Play a bell sound using Web Audio API
    * type: 'change' (pose change) or 'complete' (session end)
    */
@@ -714,24 +772,25 @@ const HP = (() => {
       return;
     }
     try {
-      const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+      const audioContext = getAudioContext();
       const now = audioContext.currentTime;
 
       if (type === 'change') {
-        // Short pleasant bell for pose change
+        // Clear bell tone for phase/pose change
         const osc = audioContext.createOscillator();
         const gain = audioContext.createGain();
         osc.connect(gain);
         gain.connect(audioContext.destination);
 
-        osc.frequency.value = 800;
+        osc.frequency.value = 880;
         osc.type = 'sine';
 
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
 
         osc.start(now);
-        osc.stop(now + 0.2);
+        osc.stop(now + 0.4);
+        debug('AUDIO', 'Bell played: change');
       } else if (type === 'complete') {
         // Longer celebratory tone for session end
         const osc1 = audioContext.createOscillator();
@@ -742,18 +801,19 @@ const HP = (() => {
         osc2.connect(gain);
         gain.connect(audioContext.destination);
 
-        osc1.frequency.value = 800;
-        osc2.frequency.value = 1000;
+        osc1.frequency.value = 880;
+        osc2.frequency.value = 1100;
         osc1.type = 'sine';
         osc2.type = 'sine';
 
-        gain.gain.setValueAtTime(0.3, now);
-        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.4);
+        gain.gain.setValueAtTime(0.6, now);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + 0.6);
 
         osc1.start(now);
-        osc2.start(now + 0.1);
-        osc1.stop(now + 0.4);
-        osc2.stop(now + 0.4);
+        osc2.start(now + 0.15);
+        osc1.stop(now + 0.6);
+        osc2.stop(now + 0.6);
+        debug('AUDIO', 'Bell played: complete');
       }
     } catch (e) {
       debug('AUDIO', 'Web Audio API unavailable', e);
@@ -764,6 +824,9 @@ const HP = (() => {
    * Initialize timer and start with first pose
    */
   function startTimer(routineName) {
+    // Unlock audio on this user gesture so bells work during auto-advance
+    unlockAudio();
+
     // Check custom routines first
     const customRoutine = (state.customRoutines || []).find(r => r.name === routineName);
     const routines = { ...HP_DATA.yogaRoutines, ...HP_DATA.hangboardRoutines };
@@ -1131,6 +1194,11 @@ const HP = (() => {
           ts.elapsed = overflow;
           ts.poseStartTime = now;
           const renderIdx = ts.timerType === 'yoga' ? ts.currentPoseIndex : ts.currentPhaseIndex;
+          // Play bell BEFORE render as a safeguard (render also plays, but this ensures it)
+          if (renderIdx > 0) {
+            debug('TIMER', `Auto-advance bell for index ${renderIdx}`);
+            playBell('change');
+          }
           if (ts.timerType === 'yoga') renderTimerPose(renderIdx);
           else renderHangboardPhase(renderIdx);
           break;
@@ -1219,7 +1287,8 @@ const HP = (() => {
       pauseIcon.style.display = 'none';
       info('TIMER', 'Timer paused');
     } else {
-      // Play
+      // Play — unlock audio on this user gesture so bells keep working
+      unlockAudio();
       ts.poseStartTime = Date.now();
       ts.isRunning = true;
 
