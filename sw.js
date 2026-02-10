@@ -1,17 +1,20 @@
-// HoldPoint Service Worker v3.0
-const CACHE_NAME = 'holdpoint-v5';
+// HoldPoint Service Worker v4.0
+const CACHE_NAME = 'holdpoint-v6';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './css/styles.css',
-  './js/data.js?v=4',
-  './js/app.js?v=4',
+  './js/data.js?v=5',
+  './js/app.js?v=5',
   './assets/icon-192.png',
   './assets/icon-512.png',
   './manifest.json'
 ];
 
 // Install: cache core assets
+// NOTE: We no longer call skipWaiting() here. The new SW waits until all
+// tabs are closed, preventing mid-session disruptions that could reset state.
+// Users get the update on their next visit — no need to clear Safari data.
 self.addEventListener('install', (event) => {
   console.log('[SW] Installing HoldPoint service worker');
   event.waitUntil(
@@ -20,8 +23,6 @@ self.addEventListener('install', (event) => {
       return cache.addAll(ASSETS_TO_CACHE);
     })
   );
-  // Activate immediately
-  self.skipWaiting();
 });
 
 // Activate: clean up old caches
@@ -39,7 +40,7 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-  // Take control of all pages immediately
+  // Take control so the new cache is used on next navigation
   self.clients.claim();
 });
 

@@ -2084,6 +2084,14 @@ const HP = (() => {
     loadSettings(); // Load from localStorage immediately
     if (!supabase || !state.user?.id) return;
 
+    // Snapshot local values before DB load so we don't lose them
+    const localSheets = {
+      enabled: state.sheetsEnabled,
+      url: state.sheetsUrl,
+      id: state.sheetId,
+      tab: state.sheetTab
+    };
+
     try {
       const { data, error: dbErr } = await supabase
         .from('user_settings')
@@ -2100,15 +2108,19 @@ const HP = (() => {
         state.corePoseMinutes = data.core_pose_minutes ?? 5;
         state.bellEnabled = data.bell_enabled ?? true;
         state.wakeLockEnabled = data.wake_lock_enabled ?? true;
-        state.sheetsEnabled = data.sheets_enabled ?? false;
-        state.sheetsUrl = data.sheets_url ?? '';
-        state.sheetId = data.sheet_id ?? '';
-        state.sheetTab = data.sheet_tab ?? '';
-        info('DB', 'Settings loaded from Supabase');
-        // Sync back to localStorage
+        // Only override sheets settings if DB has explicit non-null values;
+        // this prevents DB nulls (e.g. missing columns) from clobbering
+        // localStorage values after clearing Safari website data
+        state.sheetsEnabled = (data.sheets_enabled != null) ? data.sheets_enabled : localSheets.enabled;
+        state.sheetsUrl = (data.sheets_url != null) ? data.sheets_url : localSheets.url;
+        state.sheetId = (data.sheet_id != null) ? data.sheet_id : localSheets.id;
+        state.sheetTab = (data.sheet_tab != null) ? data.sheet_tab : localSheets.tab;
+        info('DB', `Settings loaded from Supabase (sheetsEnabled=${state.sheetsEnabled})`);
+        // Sync merged result back to localStorage
         saveSettings();
       } else {
         // No DB record yet, push localStorage settings to DB
+        info('DB', 'No settings in DB, pushing local settings');
         await saveSettingsToDB();
       }
     } catch (e) {
@@ -2121,23 +2133,27 @@ const HP = (() => {
     if (!supabase || !state.user?.id) return;
 
     try {
+      const payload = {
+        user_id: state.user.id,
+        core_pose_minutes: state.corePoseMinutes,
+        bell_enabled: state.bellEnabled,
+        wake_lock_enabled: state.wakeLockEnabled,
+        sheets_enabled: state.sheetsEnabled,
+        sheets_url: state.sheetsUrl,
+        sheet_id: state.sheetId,
+        sheet_tab: state.sheetTab,
+        updated_at: new Date().toISOString()
+      };
       const { error: dbErr } = await supabase
         .from('user_settings')
-        .upsert({
-          user_id: state.user.id,
-          core_pose_minutes: state.corePoseMinutes,
-          bell_enabled: state.bellEnabled,
-          wake_lock_enabled: state.wakeLockEnabled,
-          sheets_enabled: state.sheetsEnabled,
-          sheets_url: state.sheetsUrl,
-          sheet_id: state.sheetId,
-          sheet_tab: state.sheetTab,
-          updated_at: new Date().toISOString()
-        });
-      if (dbErr) warn('DB', 'Failed to save settings to DB', dbErr.message);
-      else debug('DB', 'Settings saved to Supabase');
+        .upsert(payload);
+      if (dbErr) {
+        warn('DB', `Failed to save settings to DB: ${dbErr.message} (sheets_enabled=${state.sheetsEnabled})`);
+      } else {
+        info('DB', `Settings saved to Supabase (sheetsEnabled=${state.sheetsEnabled}, url=${state.sheetsUrl ? 'set' : 'empty'})`);
+      }
     } catch (e) {
-      warn('DB', 'Settings DB save error', e.message);
+      warn('DB', `Settings DB save error: ${e.message}`);
     }
   }
 
