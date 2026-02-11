@@ -1,6 +1,6 @@
 /**
  * HoldPoint — Main Application
- * Version: 0.3.0 (Invite a Friend feature)
+ * Version: 0.3.2 (Always-on wake lock + aggressive recovery)
  *
  * Logging is built into every layer. To view logs:
  *   - Open browser console (F12 or Cmd+Option+I)
@@ -24,7 +24,7 @@ const HP = (() => {
     console.error('[HP] Failed to initialize Supabase client:', e);
   }
 
-  console.log('%c[HP] HoldPoint v0.3.0 loaded', 'color: green; font-weight: bold;');
+  console.log('%c[HP] HoldPoint v0.3.2 loaded', 'color: green; font-weight: bold;');
 
   // ============================================
   // LOGGING SYSTEM
@@ -715,16 +715,24 @@ const HP = (() => {
   let wakeLock = null;
 
   async function requestWakeLock() {
-    if (state.wakeLockEnabled === false) {
-      debug('TIMER', 'Wake lock skipped (disabled in settings)');
-      return;
-    }
+    // Always request wake lock during timer — the app doesn't work without it
     try {
       if ('wakeLock' in navigator) {
+        // Release existing lock first to get a fresh one
+        if (wakeLock) {
+          try { wakeLock.release(); } catch (e) {}
+          wakeLock = null;
+        }
         wakeLock = await navigator.wakeLock.request('screen');
         info('TIMER', 'Wake lock acquired — screen will stay on');
         wakeLock.addEventListener('release', () => {
-          debug('TIMER', 'Wake lock released');
+          debug('TIMER', 'Wake lock was released by OS');
+          wakeLock = null;
+          // If timer is still running, try to re-acquire immediately
+          if (state.timerState?.isRunning) {
+            info('TIMER', 'Timer still active — re-requesting wake lock');
+            requestWakeLock();
+          }
         });
       } else {
         warn('TIMER', 'Wake Lock API not supported on this device');
@@ -741,13 +749,6 @@ const HP = (() => {
       info('TIMER', 'Wake lock released');
     }
   }
-
-  // Re-request wake lock when page becomes visible again (it gets released on hide)
-  document.addEventListener('visibilitychange', () => {
-    if (!document.hidden && state.timerState?.isRunning && !wakeLock) {
-      requestWakeLock();
-    }
-  });
 
   // ============================================
   // BACKGROUND TIMER — setInterval backup so bells
@@ -798,9 +799,14 @@ const HP = (() => {
       _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       debug('AUDIO', 'AudioContext created, state: ' + _audioCtx.state);
     }
-    // Resume if iOS suspended it
-    if (_audioCtx.state === 'suspended') {
-      _audioCtx.resume().then(() => debug('AUDIO', 'AudioContext resumed'));
+    // Resume if iOS suspended or interrupted it (screen lock, phone call, Siri, etc.)
+    if (_audioCtx.state === 'suspended' || _audioCtx.state === 'interrupted') {
+      _audioCtx.resume().then(() => debug('AUDIO', 'AudioContext resumed from ' + _audioCtx.state)).catch(() => {});
+    }
+    // Nuclear option: if context is in 'closed' state, recreate it entirely
+    if (_audioCtx.state === 'closed') {
+      warn('AUDIO', 'AudioContext was closed — recreating');
+      _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
     return _audioCtx;
   }
@@ -809,30 +815,41 @@ const HP = (() => {
   // Must run on EVERY gesture (once:false) because iOS can re-suspend
   // the AudioContext after background, notifications, phone calls, etc.
   function unlockAudio() {
-    const ctx = getAudioContext();
-    if (ctx.state === 'suspended') {
-      ctx.resume().then(() => debug('AUDIO', 'AudioContext unlocked via gesture'));
+    let ctx = getAudioContext();
+
+    // If context is stuck after screen lock / phone call, force-recreate
+    if (ctx.state !== 'running') {
+      ctx.resume().then(() => debug('AUDIO', 'AudioContext unlocked via gesture')).catch(() => {
+        warn('AUDIO', 'Resume failed — force-recreating AudioContext');
+        _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        ctx = _audioCtx;
+        debug('AUDIO', 'New AudioContext created, state: ' + ctx.state);
+      });
     }
+
     // Play a silent buffer through Web Audio to fully unlock on iOS
-    const buf = ctx.createBuffer(1, 1, 22050);
-    const src = ctx.createBufferSource();
-    src.buffer = buf;
-    src.connect(ctx.destination);
-    src.start(0);
+    try {
+      const buf = ctx.createBuffer(1, 1, 22050);
+      const src = ctx.createBufferSource();
+      src.buffer = buf;
+      src.connect(ctx.destination);
+      src.start(0);
+    } catch (e) {
+      debug('AUDIO', 'Silent buffer play failed', e.message);
+    }
 
     // HTML5 Audio hack: playing a silent audio element upgrades the iOS
     // audio session from "ambient" (respects mute switch) to "playback"
     // (plays through mute switch). Without this, bells are silent when
     // the physical mute switch is on.
-    if (!window._silentAudioPlayed) {
-      try {
-        const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwMHAAAAAAD/+1DEAAAHAAGf9AAAISQQM/8MQBAAAABAA3/EACMAANwfB8Hw');
-        audio.play().catch(() => {});
-        window._silentAudioPlayed = true;
-        debug('AUDIO', 'HTML5 Audio silent hack played');
-      } catch (e) {}
-    }
-    debug('AUDIO', 'Silent unlock buffer played');
+    // Re-play after EVERY background return, not just once
+    try {
+      const audio = new Audio('data:audio/mp3;base64,SUQzBAAAAAAAI1RTU0UAAAAPAAADTGF2ZjU4Ljc2LjEwMAAAAAAAAAAAAAAA//tQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWGluZwAAAA8AAAACAAABhgC7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7//////////////////////////////////////////////////////////////////8AAAAATGF2YzU4LjEzAAAAAAAAAAAAAAAAJAAAAAAAAAAAAYYoRwMHAAAAAAD/+1DEAAAHAAGf9AAAISQQM/8MQBAAAABAA3/EACMAANwfB8Hw');
+      audio.play().catch(() => {});
+      debug('AUDIO', 'HTML5 Audio silent hack played');
+    } catch (e) {}
+
+    debug('AUDIO', 'Audio unlock attempted, context state: ' + ctx.state);
   }
 
   // Attach unlock to EVERY user gesture — keeps AudioContext alive on iOS
@@ -850,7 +867,22 @@ const HP = (() => {
       return;
     }
     try {
-      const audioContext = getAudioContext();
+      let audioContext = getAudioContext();
+
+      // If context is not running, try to resume; if that fails, recreate
+      if (audioContext.state !== 'running') {
+        warn('AUDIO', `Bell attempted with context state: ${audioContext.state} — trying recovery`);
+        try {
+          audioContext.resume();
+        } catch (e) {}
+        // If still not running, force-recreate
+        if (audioContext.state !== 'running') {
+          _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          audioContext = _audioCtx;
+          warn('AUDIO', 'AudioContext force-recreated for bell, state: ' + audioContext.state);
+        }
+      }
+
       const now = audioContext.currentTime;
 
       if (type === 'change') {
@@ -1368,17 +1400,36 @@ const HP = (() => {
     state.timerState.animFrameId = requestAnimationFrame(timerTick);
   }
 
+  // When page becomes visible again, recover timer, audio, AND wake lock
+  function recoverFromBackground(reason) {
+    ensureTimerRunning(reason);
+    // Re-acquire wake lock if timer is running (iOS releases it on background)
+    if (state.timerState?.isRunning && !wakeLock) {
+      info('TIMER', `Re-requesting wake lock on ${reason}`);
+      requestWakeLock();
+    }
+    // Try to resume audio context — even without a gesture, some browsers allow it
+    if (_audioCtx && _audioCtx.state !== 'running') {
+      info('AUDIO', `Attempting audio recovery on ${reason}, state: ${_audioCtx.state}`);
+      _audioCtx.resume().then(() => {
+        info('AUDIO', `AudioContext recovered on ${reason}`);
+      }).catch(() => {
+        warn('AUDIO', `AudioContext resume failed on ${reason} — will retry on next touch`);
+      });
+    }
+  }
+
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) ensureTimerRunning('page became visible');
+    if (!document.hidden) recoverFromBackground('page became visible');
   });
 
   // Backup: focus event catches notification banners and alerts that
   // may not trigger visibilitychange (especially on iOS PWA)
-  window.addEventListener('focus', () => ensureTimerRunning('window regained focus'));
+  window.addEventListener('focus', () => recoverFromBackground('window regained focus'));
 
   // Backup: pageshow fires when page is restored from bfcache
   window.addEventListener('pageshow', (e) => {
-    if (e.persisted) ensureTimerRunning('restored from bfcache');
+    if (e.persisted) recoverFromBackground('restored from bfcache');
   });
 
   // Watchdog: every 2 seconds, verify rAF loop is alive when timer should be running.
