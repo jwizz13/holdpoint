@@ -63,6 +63,15 @@ CREATE TABLE IF NOT EXISTS user_settings (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
+-- 6. App invites (email invitation tracking)
+CREATE TABLE IF NOT EXISTS app_invites (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  inviter_id UUID REFERENCES auth.users(id) ON DELETE SET NULL,
+  invited_email TEXT NOT NULL,
+  status TEXT DEFAULT 'sent',
+  created_at TIMESTAMPTZ DEFAULT NOW()
+);
+
 -- ============================================
 -- Row Level Security (RLS) — users can only
 -- access their own data
@@ -73,6 +82,7 @@ ALTER TABLE session_history ENABLE ROW LEVEL SECURITY;
 ALTER TABLE custom_routines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE community_routines ENABLE ROW LEVEL SECURITY;
 ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE app_invites ENABLE ROW LEVEL SECURITY;
 
 -- Profiles: users can read/update their own
 CREATE POLICY "Users can view own profile"
@@ -118,6 +128,12 @@ CREATE POLICY "Users can insert own settings"
 CREATE POLICY "Users can update own settings"
   ON user_settings FOR UPDATE USING (auth.uid() = user_id);
 
+-- App invites: users can view/create their own
+CREATE POLICY "Users can view own invites"
+  ON app_invites FOR SELECT USING (auth.uid() = inviter_id);
+CREATE POLICY "Users can insert own invites"
+  ON app_invites FOR INSERT WITH CHECK (auth.uid() = inviter_id);
+
 -- ============================================
 -- Auto-create profile on signup
 -- ============================================
@@ -147,3 +163,5 @@ CREATE INDEX IF NOT EXISTS idx_session_history_user ON session_history(user_id);
 CREATE INDEX IF NOT EXISTS idx_session_history_date ON session_history(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_custom_routines_user ON custom_routines(user_id);
 CREATE INDEX IF NOT EXISTS idx_community_routines_date ON community_routines(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_app_invites_inviter ON app_invites(inviter_id);
+CREATE INDEX IF NOT EXISTS idx_app_invites_date ON app_invites(created_at DESC);

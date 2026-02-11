@@ -1,6 +1,6 @@
 /**
  * HoldPoint — Main Application
- * Version: 0.2.0 (Audio fix + timer hardening)
+ * Version: 0.3.0 (Invite a Friend feature)
  *
  * Logging is built into every layer. To view logs:
  *   - Open browser console (F12 or Cmd+Option+I)
@@ -24,7 +24,7 @@ const HP = (() => {
     console.error('[HP] Failed to initialize Supabase client:', e);
   }
 
-  console.log('%c[HP] HoldPoint v0.2.1 loaded', 'color: green; font-weight: bold;');
+  console.log('%c[HP] HoldPoint v0.3.0 loaded', 'color: green; font-weight: bold;');
 
   // ============================================
   // LOGGING SYSTEM
@@ -2472,6 +2472,94 @@ Step 6: Test it
     alert(instructions);
   }
 
+  // --- Invite a Friend ---
+  function openInviteModal() {
+    const modal = document.getElementById('invite-modal');
+    const emailInput = document.getElementById('invite-email');
+    const statusEl = document.getElementById('invite-status');
+    const sendBtn = document.getElementById('btn-invite-send');
+
+    if (modal) modal.style.display = 'flex';
+    if (emailInput) { emailInput.value = ''; emailInput.focus(); }
+    if (statusEl) { statusEl.textContent = ''; statusEl.className = 'invite-status'; }
+    if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send Invite'; }
+    info('INVITE', 'Invite modal opened');
+  }
+
+  function closeInviteModal() {
+    const modal = document.getElementById('invite-modal');
+    if (modal) modal.style.display = 'none';
+    debug('INVITE', 'Invite modal closed');
+  }
+
+  async function sendInvite() {
+    const emailInput = document.getElementById('invite-email');
+    const statusEl = document.getElementById('invite-status');
+    const sendBtn = document.getElementById('btn-invite-send');
+    const email = (emailInput?.value || '').trim();
+
+    // Validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      if (statusEl) {
+        statusEl.textContent = 'Please enter a valid email address.';
+        statusEl.className = 'invite-status error';
+      }
+      warn('INVITE', 'Invalid email entered', email);
+      return;
+    }
+
+    // Loading state
+    if (sendBtn) { sendBtn.disabled = true; sendBtn.textContent = 'Sending...'; }
+    if (statusEl) { statusEl.textContent = ''; statusEl.className = 'invite-status'; }
+    info('INVITE', `Sending invite to ${email}`);
+
+    try {
+      // Get inviter name from profile
+      const inviterName = state.displayName || state.email || 'A HoldPoint user';
+
+      // Call Supabase Edge Function
+      const { data, error: fnErr } = await supabase.functions.invoke('send-invite', {
+        body: { email, inviter_name: inviterName }
+      });
+
+      if (fnErr) throw new Error(fnErr.message || 'Failed to send invite');
+      if (data?.error) throw new Error(data.error);
+
+      // Success
+      info('INVITE', `Invite sent successfully to ${email}`);
+      if (statusEl) {
+        statusEl.textContent = `Invite sent to ${email}!`;
+        statusEl.className = 'invite-status success';
+      }
+      if (emailInput) emailInput.value = '';
+      if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Send Another'; }
+
+      // Log to app_invites table
+      try {
+        const session = await supabase.auth.getSession();
+        const userId = session?.data?.session?.user?.id;
+        if (userId) {
+          await supabase.from('app_invites').insert({
+            inviter_id: userId,
+            invited_email: email,
+            status: 'sent'
+          });
+          debug('INVITE', 'Invite recorded in app_invites table');
+        }
+      } catch (dbErr) {
+        warn('INVITE', 'Failed to record invite in DB (email still sent)', dbErr.message);
+      }
+
+    } catch (err) {
+      error('INVITE', `Failed to send invite: ${err.message}`);
+      if (statusEl) {
+        statusEl.textContent = `Could not send invite. ${err.message}`;
+        statusEl.className = 'invite-status error';
+      }
+      if (sendBtn) { sendBtn.disabled = false; sendBtn.textContent = 'Try Again'; }
+    }
+  }
+
   // --- Community Routines ---
   async function loadCommunityRoutines() {
     if (!supabase) return [];
@@ -3139,6 +3227,23 @@ Step 6: Test it
       renderCommunityScreen();
     });
     document.getElementById('btn-logout')?.addEventListener('click', handleLogout);
+
+    // Invite a Friend
+    document.getElementById('btn-invite-friend')?.addEventListener('click', () => {
+      debug('NAV', 'Invite a Friend tapped');
+      openInviteModal();
+    });
+    document.getElementById('btn-invite-cancel')?.addEventListener('click', closeInviteModal);
+    document.getElementById('btn-invite-close')?.addEventListener('click', closeInviteModal);
+    document.getElementById('btn-invite-send')?.addEventListener('click', sendInvite);
+    // Close modal on backdrop click
+    document.getElementById('invite-modal')?.addEventListener('click', (e) => {
+      if (e.target.id === 'invite-modal') closeInviteModal();
+    });
+    // Send on Enter key in email input
+    document.getElementById('invite-email')?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') { e.preventDefault(); sendInvite(); }
+    });
 
     // Settings back
     document.getElementById('btn-settings-back')?.addEventListener('click', () => {
