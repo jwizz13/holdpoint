@@ -30,7 +30,7 @@ User taps "Invite a Friend" → Modal opens → Enters email → JS calls Edge F
 |------|-------------|
 | `index.html` | Added "Invite a Friend" profile menu item + invite modal overlay. Version bumped to v0.3.0. |
 | `css/styles.css` | Added `.modal-overlay`, `.modal-card`, `.modal-header`, `.modal-close`, `.modal-desc`, `.modal-actions`, `.invite-status` (with `.success` and `.error` variants) |
-| `js/app.js` | Added `openInviteModal()`, `closeInviteModal()`, `sendInvite()` functions + event listeners for modal open/close/send/backdrop-click/enter-key. Version bumped to v0.3.0. |
+| `js/app.js` | Added `openInviteModal()`, `closeInviteModal()`, `sendInvite()` functions + event listeners for modal open/close/send/backdrop-click/enter-key. |
 | `supabase-schema.sql` | Added `app_invites` table, RLS policies (users can view/insert own), and indexes |
 | `supabase/functions/send-invite/index.ts` | **NEW** — Deno Edge Function that validates email, calls Resend API, returns success/error |
 
@@ -50,6 +50,10 @@ Select the HoldPoint project when prompted.
 cd ~/Claude\'s\ Projects/holdpoint
 supabase functions deploy send-invite
 ```
+
+**Note:** The original Deno import (`import { serve } from "https://deno.land/std@0.168.0/http/server.ts"`) failed on deploy with a 500 error. Fix was to remove the import and use `Deno.serve()` instead — it's built into the Deno runtime that Supabase Edge Functions use (v2.1.4+).
+
+**JWT Verification:** If the Edge Function returns non-2xx errors with no logs beyond boot/shutdown, check the **Details** tab in the Supabase Edge Functions dashboard. If "Verify JWT" is enabled, try disabling it — the function handles its own validation.
 
 ### 4. Create the app_invites Table
 Run this SQL in your Supabase Dashboard → SQL Editor:
@@ -75,10 +79,12 @@ CREATE INDEX IF NOT EXISTS idx_app_invites_inviter ON app_invites(inviter_id);
 CREATE INDEX IF NOT EXISTS idx_app_invites_date ON app_invites(created_at DESC);
 ```
 
+**Important:** Run ONLY this SQL — not the full `supabase-schema.sql` file. Running the full file will fail with "policy already exists" errors because the other tables and policies were created during initial setup.
+
 ### 5. Push to GitHub
 ```bash
 cd ~/Claude\'s\ Projects/holdpoint
-git add -A && git commit -m "Add invite a friend feature (v0.3.0)" && git push
+git add -A && git commit -m "Add invite a friend feature" && git push
 ```
 
 ## Email Details
@@ -113,6 +119,15 @@ git add -A && git commit -m "Add invite a friend feature (v0.3.0)" && git push
 5. Returns `{ success: true, id }` or `{ error: "message" }`
 
 **Logging:** All invite actions logged with `[HP][INVITE]` category prefix in browser console.
+
+## Troubleshooting
+
+| Problem | Cause | Fix |
+|---------|-------|-----|
+| "Could not send invite. Edge function returned a non-2xx status code" | Edge Function not deployed or JWT verification blocking it | Run `supabase functions deploy send-invite`, check Details tab for JWT toggle |
+| Deploy fails with "Import failed: 500 Internal Server Error" | Old Deno std library import URL broken | Use `Deno.serve()` instead of importing `serve` from deno.land |
+| SQL errors "policy already exists" | Running full schema file instead of just the app_invites SQL | Run only the app_invites table/policy SQL, not the full schema |
+| Function boots but no invocation logs | Function crashes before reaching code, or JWT verification rejecting requests | Disable "Verify JWT" in function Details tab |
 
 ## Dependencies
 

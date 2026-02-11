@@ -103,7 +103,7 @@ Deno.serve(async (req: Request) => {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        from: "HoldPoint <onboarding@resend.dev>",
+        from: "HoldPoint <holdpoint@wizzwell.life>",
         to: [email],
         subject: subject,
         html: buildEmailHTML(inviter),

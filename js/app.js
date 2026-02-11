@@ -1,6 +1,6 @@
 /**
  * HoldPoint — Main Application
- * Version: 0.3.2 (Always-on wake lock + aggressive recovery)
+ * Version: 0.3.3 (Fix invite email delivery)
  *
  * Logging is built into every layer. To view logs:
  *   - Open browser console (F12 or Cmd+Option+I)
@@ -24,7 +24,7 @@ const HP = (() => {
     console.error('[HP] Failed to initialize Supabase client:', e);
   }
 
-  console.log('%c[HP] HoldPoint v0.3.2 loaded', 'color: green; font-weight: bold;');
+  console.log('%c[HP] HoldPoint v0.3.3 loaded', 'color: green; font-weight: bold;');
 
   // ============================================
   // LOGGING SYSTEM
@@ -2568,13 +2568,19 @@ Step 6: Test it
       // Get inviter name from profile
       const inviterName = state.displayName || state.email || 'A HoldPoint user';
 
-      // Call Supabase Edge Function
-      const { data, error: fnErr } = await supabase.functions.invoke('send-invite', {
-        body: { email, inviter_name: inviterName }
+      // Call Supabase Edge Function directly via fetch
+      const fnResponse = await fetch(`${SUPABASE_URL}/functions/v1/send-invite`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${SUPABASE_ANON_KEY}`,
+          'apikey': SUPABASE_ANON_KEY
+        },
+        body: JSON.stringify({ email, inviter_name: inviterName })
       });
 
-      if (fnErr) throw new Error(fnErr.message || 'Failed to send invite');
-      if (data?.error) throw new Error(data.error);
+      const data = await fnResponse.json();
+      if (!fnResponse.ok || data?.error) throw new Error(data?.error || 'Failed to send invite');
 
       // Success
       info('INVITE', `Invite sent successfully to ${email}`);
