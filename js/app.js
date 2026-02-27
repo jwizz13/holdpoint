@@ -1419,13 +1419,53 @@ const HP = (() => {
     }
   }
 
+  // ── iOS PWA persistence: force-save all state before the OS kills us ──
+  function forceSaveAllState() {
+    const userKey = state.user?.email || 'anon';
+    try {
+      // Save session history
+      const histKey = `hp_history_${userKey}`;
+      localStorage.setItem(histKey, JSON.stringify(state.sessionHistory));
+      // Verify it stuck
+      const check = localStorage.getItem(histKey);
+      if (!check) warn('STORAGE', 'Force-save: history write did not persist');
+      // Save settings
+      saveSettings();
+      info('STORAGE', 'Force-saved all state (lifecycle event)');
+    } catch (e) {
+      error('STORAGE', 'Force-save failed', e);
+    }
+  }
+
+  // Request persistent storage so iOS doesn't evict our data
+  if (navigator.storage && navigator.storage.persist) {
+    navigator.storage.persist().then(granted => {
+      info('STORAGE', `Persistent storage ${granted ? 'granted' : 'denied'}`);
+    });
+  }
+
   document.addEventListener('visibilitychange', () => {
-    if (!document.hidden) recoverFromBackground('page became visible');
+    if (document.hidden) {
+      // Going to background — save everything before iOS kills us
+      forceSaveAllState();
+    } else {
+      recoverFromBackground('page became visible');
+    }
   });
 
   // Backup: focus event catches notification banners and alerts that
   // may not trigger visibilitychange (especially on iOS PWA)
   window.addEventListener('focus', () => recoverFromBackground('window regained focus'));
+
+  // pagehide fires reliably on iOS when PWA is being killed
+  window.addEventListener('pagehide', () => {
+    forceSaveAllState();
+  });
+
+  // beforeunload as last resort
+  window.addEventListener('beforeunload', () => {
+    forceSaveAllState();
+  });
 
   // Backup: pageshow fires when page is restored from bfcache
   window.addEventListener('pageshow', (e) => {
@@ -1663,8 +1703,15 @@ const HP = (() => {
     state.sessionHistory.unshift(session); // Add to front (newest first)
     try {
       const key = `hp_history_${state.user?.email || 'anon'}`;
-      localStorage.setItem(key, JSON.stringify(state.sessionHistory));
-      info('STORAGE', `Session saved to history (${state.sessionHistory.length} total)`);
+      const payload = JSON.stringify(state.sessionHistory);
+      localStorage.setItem(key, payload);
+      // Verify the write actually persisted
+      const readBack = localStorage.getItem(key);
+      if (readBack === payload) {
+        info('STORAGE', `Session saved & verified (${state.sessionHistory.length} total)`);
+      } else {
+        warn('STORAGE', `Session saved but verify FAILED — readback mismatch`);
+      }
     } catch (e) {
       error('STORAGE', 'Failed to save session', e);
     }
@@ -2211,6 +2258,32 @@ const HP = (() => {
   // --- Session History ---
   async function loadSessionHistoryFromDB() {
     loadSessionHistory(); // Load from localStorage immediately
+
+    // v0.3.4 one-time recovery: add missing session from 2/26/2026
+    // (lost due to iOS PWA backgrounding bug fixed in this version)
+    const recoveryKey = 'hp_recovery_034_done';
+    if (!localStorage.getItem(recoveryKey)) {
+      const missing = {
+        date: '2026-02-26T12:00:00.000Z',
+        routineName: 'Upper Body',
+        durationMin: 53,
+        coreTime: 0,
+        completed: 'manual recovery (v0.3.4)',
+        type: 'yoga'
+      };
+      const alreadyExists = state.sessionHistory.some(s =>
+        s.date && s.date.startsWith('2026-02-26') && s.routineName === 'Upper Body'
+      );
+      if (!alreadyExists) {
+        state.sessionHistory.push(missing); // push to end (oldest)
+        state.sessionHistory.sort((a, b) => new Date(b.date) - new Date(a.date));
+        const key = `hp_history_${state.user?.email || 'anon'}`;
+        localStorage.setItem(key, JSON.stringify(state.sessionHistory));
+        info('STORAGE', 'Recovered missing session: 2/26 Upper Body 53min');
+      }
+      localStorage.setItem(recoveryKey, 'true');
+    }
+
     if (!supabase || !state.user?.id) return;
 
     try {
