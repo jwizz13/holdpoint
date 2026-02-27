@@ -2261,10 +2261,10 @@ const HP = (() => {
 
     // v0.3.4 one-time recovery: add missing session from 2/26/2026
     // (lost due to iOS PWA backgrounding bug fixed in this version)
-    const recoveryKey = 'hp_recovery_034_done';
+    const recoveryKey = 'hp_recovery_034b_done';
     if (!localStorage.getItem(recoveryKey)) {
       const missing = {
-        date: '2026-02-26T12:00:00.000Z',
+        date: '2026-02-26T18:00:00.000Z',
         routineName: 'Upper Body',
         durationMin: 53,
         coreTime: 0,
