@@ -149,6 +149,42 @@
     <div id="detail-meta" class="detail-meta"></div>
     <div id="detail-focus" class="detail-focus"></div>
 
+    <!-- Hangboard settings (hidden for yoga) -->
+    <div id="hb-settings" class="hb-settings" style="display:none;">
+      <div class="hb-setting-row">
+        <span class="hb-setting-label">Sets per grip</span>
+        <div class="hb-stepper">
+          <button class="hb-step-btn" data-field="sets" data-dir="-1">−</button>
+          <span class="hb-step-val" id="hb-val-sets">3</span>
+          <button class="hb-step-btn" data-field="sets" data-dir="1">+</button>
+        </div>
+      </div>
+      <div class="hb-setting-row">
+        <span class="hb-setting-label">Hang time</span>
+        <div class="hb-stepper">
+          <button class="hb-step-btn" data-field="hang" data-dir="-1">−</button>
+          <span class="hb-step-val" id="hb-val-hang">7s</span>
+          <button class="hb-step-btn" data-field="hang" data-dir="1">+</button>
+        </div>
+      </div>
+      <div class="hb-setting-row">
+        <span class="hb-setting-label">Rest between reps</span>
+        <div class="hb-stepper">
+          <button class="hb-step-btn" data-field="repRest" data-dir="-1">−</button>
+          <span class="hb-step-val" id="hb-val-repRest">3s</span>
+          <button class="hb-step-btn" data-field="repRest" data-dir="1">+</button>
+        </div>
+      </div>
+      <div class="hb-setting-row">
+        <span class="hb-setting-label">Rest between sets</span>
+        <div class="hb-stepper">
+          <button class="hb-step-btn" data-field="setRest" data-dir="-1">−</button>
+          <span class="hb-step-val" id="hb-val-setRest">3:00</span>
+          <button class="hb-step-btn" data-field="setRest" data-dir="1">+</button>
+        </div>
+      </div>
+    </div>
+
     <button class="btn-start" id="btn-start-routine">Start Routine</button>
 
     <div id="pose-list" class="pose-list"></div>
@@ -335,7 +371,7 @@
       </div>
       <div class="profile-menu-arrow">›</div>
     </div>
-    <div style="text-align:center; padding:20px 0 10px; color:#333; font-size:14px; font-weight:600;">v0.3.4</div>
+    <div style="text-align:center; padding:20px 0 10px; color:#333; font-size:14px; font-weight:600;">v0.3.5</div>
   </div>
 
   <!-- ============================================ -->

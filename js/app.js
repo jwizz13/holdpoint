@@ -474,6 +474,69 @@ const HP = (() => {
   }
 
   // ============================================
+  // HANGBOARD SETTINGS (user-adjustable per session)
+  // ============================================
+  const hbDefaults = { sets: 3, hang: 7, repRest: 3, setRest: 180 };
+  const hbLimits = {
+    sets:    { min: 1, max: 10, step: 1 },
+    hang:    { min: 3, max: 30, step: 1 },
+    repRest: { min: 1, max: 30, step: 1 },
+    setRest: { min: 30, max: 600, step: 30 }
+  };
+  let hbSettings = { ...hbDefaults };
+
+  function loadHbSettings() {
+    try {
+      const key = `hp_hb_settings_${state.user?.email || 'anon'}`;
+      const saved = localStorage.getItem(key);
+      if (saved) hbSettings = { ...hbDefaults, ...JSON.parse(saved) };
+    } catch (e) { /* use defaults */ }
+  }
+
+  function saveHbSettings() {
+    try {
+      const key = `hp_hb_settings_${state.user?.email || 'anon'}`;
+      localStorage.setItem(key, JSON.stringify(hbSettings));
+    } catch (e) { /* best effort */ }
+  }
+
+  function fmtSetRest(s) {
+    return `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
+  }
+
+  function updateHbUI() {
+    document.getElementById('hb-val-sets').textContent = hbSettings.sets;
+    document.getElementById('hb-val-hang').textContent = hbSettings.hang + 's';
+    document.getElementById('hb-val-repRest').textContent = hbSettings.repRest + 's';
+    document.getElementById('hb-val-setRest').textContent = fmtSetRest(hbSettings.setRest);
+  }
+
+  // Build an overridden copy of a hangboard routine with user settings applied
+  function applyHbOverrides(routine) {
+    return {
+      ...routine,
+      setsPerGrip: hbSettings.sets,
+      hangSeconds: hbSettings.hang,
+      repRestSeconds: hbSettings.repRest,
+      setRestSeconds: hbSettings.setRest
+    };
+  }
+
+  // Wire up stepper buttons
+  document.querySelectorAll('.hb-step-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const field = btn.dataset.field;
+      const dir = parseInt(btn.dataset.dir);
+      const lim = hbLimits[field];
+      hbSettings[field] = Math.min(lim.max, Math.max(lim.min, hbSettings[field] + dir * lim.step));
+      updateHbUI();
+      saveHbSettings();
+      // Refresh detail view with new settings
+      if (state.selectedRoutine) openRoutineDetail(state.selectedRoutine);
+    });
+  });
+
+  // ============================================
   // ROUTINE DETAIL
   // ============================================
   function openRoutineDetail(routineName) {
@@ -494,6 +557,9 @@ const HP = (() => {
 
     // Update header
     document.getElementById('detail-title').textContent = routineName;
+
+    // Hide hangboard settings for yoga
+    document.getElementById('hb-settings').style.display = isYoga ? 'none' : '';
 
     if (isYoga) {
       const isCustom = customRoutine || routine._isCustom;
@@ -534,12 +600,18 @@ const HP = (() => {
       });
       debug('DETAIL', `Rendered ${routine.poses.length} poses`);
     } else {
-      // Hangboard detail
-      const duration = HP_DATA.calcHangboardDuration(routine);
+      // Hangboard detail — apply user overrides
+      loadHbSettings();
+      const customRoutine = applyHbOverrides(routine);
+      const duration = HP_DATA.calcHangboardDuration(customRoutine);
       document.getElementById('detail-meta').textContent =
-        `${routine.grips.length} grips · ${duration} min · ${routine.setsPerGrip} sets × ${routine.repsPerSet} reps`;
-      document.getElementById('detail-focus').textContent = routine.description;
+        `${customRoutine.grips.length} grips · ${duration} min · ${customRoutine.setsPerGrip} sets × ${customRoutine.repsPerSet} reps`;
+      document.getElementById('detail-focus').textContent = `${customRoutine.hangSeconds}s hang / ${customRoutine.repRestSeconds}s rest · ${fmtSetRest(customRoutine.setRestSeconds)} between sets`;
+      // Show settings panel and sync UI
+      document.getElementById('hb-settings').style.display = '';
+      updateHbUI();
 
+      const r = customRoutine; // shorthand for the overridden routine
       const list = document.getElementById('pose-list');
       list.innerHTML = '';
 
@@ -558,30 +630,30 @@ const HP = (() => {
             <div class="pose-item-desc">Get warmed up before hanging</div>
           </div>
         </div>
-        <div class="pose-item-time">${fmtSec(routine.warmupSeconds)}</div>
+        <div class="pose-item-time">${fmtSec(r.warmupSeconds)}</div>
       `;
       list.appendChild(warmupItem);
 
       // Grip sets with rest rows between them
-      const singleArmGrips = routine.singleArmGrips || [];
-      const switchSec = routine.switchSeconds || 5;
-      const totalGripSets = routine.grips.length * routine.setsPerGrip;
+      const singleArmGrips = r.singleArmGrips || [];
+      const switchSec = r.switchSeconds || 5;
+      const totalGripSets = r.grips.length * r.setsPerGrip;
       let absoluteSet = 0;
 
       // One arm's rep time (no get-ready): reps × hang + (reps-1) × repRest
-      const oneArmRepSeconds = (routine.repsPerSet * routine.hangSeconds)
-        + ((routine.repsPerSet - 1) * routine.repRestSeconds);
+      const oneArmRepSeconds = (r.repsPerSet * r.hangSeconds)
+        + ((r.repsPerSet - 1) * r.repRestSeconds);
 
-      routine.grips.forEach((grip, i) => {
+      r.grips.forEach((grip, i) => {
         const isSingleArm = singleArmGrips.includes(grip);
 
-        for (let set = 1; set <= routine.setsPerGrip; set++) {
+        for (let set = 1; set <= r.setsPerGrip; set++) {
           absoluteSet++;
 
           if (isSingleArm) {
             // --- Right hand set ---
             itemNum++;
-            const rightSetSeconds = routine.getReadySeconds + oneArmRepSeconds;
+            const rightSetSeconds = r.getReadySeconds + oneArmRepSeconds;
             const rightItem = document.createElement('div');
             rightItem.className = 'pose-item';
             rightItem.innerHTML = `
@@ -589,7 +661,7 @@ const HP = (() => {
                 <div class="pose-number">${itemNum}</div>
                 <div class="pose-item-info">
                   <div class="pose-item-name">${grip} (Right) — Set ${set}</div>
-                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+                  <div class="pose-item-desc">${r.repsPerSet} reps × ${r.hangSeconds}s hang / ${r.repRestSeconds}s rest</div>
                 </div>
               </div>
               <div class="pose-item-time">${fmtSec(rightSetSeconds)}</div>
@@ -621,7 +693,7 @@ const HP = (() => {
                 <div class="pose-number">${itemNum}</div>
                 <div class="pose-item-info">
                   <div class="pose-item-name">${grip} (Left) — Set ${set}</div>
-                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+                  <div class="pose-item-desc">${r.repsPerSet} reps × ${r.hangSeconds}s hang / ${r.repRestSeconds}s rest</div>
                 </div>
               </div>
               <div class="pose-item-time">${fmtSec(oneArmRepSeconds)}</div>
@@ -630,7 +702,7 @@ const HP = (() => {
 
             // --- Adjusted set rest ---
             if (absoluteSet < totalGripSets) {
-              const adjustedRestSec = routine.setRestSeconds - switchSec - oneArmRepSeconds;
+              const adjustedRestSec = r.setRestSeconds - switchSec - oneArmRepSeconds;
               if (adjustedRestSec > 0) {
                 itemNum++;
                 const restItem = document.createElement('div');
@@ -651,9 +723,9 @@ const HP = (() => {
           } else {
             // --- Normal two-hand grip ---
             itemNum++;
-            const setSeconds = routine.getReadySeconds
-              + (routine.repsPerSet * routine.hangSeconds)
-              + ((routine.repsPerSet - 1) * routine.repRestSeconds);
+            const setSeconds = r.getReadySeconds
+              + (r.repsPerSet * r.hangSeconds)
+              + ((r.repsPerSet - 1) * r.repRestSeconds);
 
             const item = document.createElement('div');
             item.className = 'pose-item';
@@ -662,7 +734,7 @@ const HP = (() => {
                 <div class="pose-number">${itemNum}</div>
                 <div class="pose-item-info">
                   <div class="pose-item-name">${grip} — Set ${set}</div>
-                  <div class="pose-item-desc">${routine.repsPerSet} reps × ${routine.hangSeconds}s hang / ${routine.repRestSeconds}s rest</div>
+                  <div class="pose-item-desc">${r.repsPerSet} reps × ${r.hangSeconds}s hang / ${r.repRestSeconds}s rest</div>
                 </div>
               </div>
               <div class="pose-item-time">${fmtSec(setSeconds)}</div>
@@ -682,14 +754,14 @@ const HP = (() => {
                     <div class="pose-item-desc">Recovery between sets</div>
                   </div>
                 </div>
-                <div class="pose-item-time">${fmtSec(routine.setRestSeconds)}</div>
+                <div class="pose-item-time">${fmtSec(r.setRestSeconds)}</div>
               `;
               list.appendChild(restItem);
             }
           }
         }
       });
-      debug('DETAIL', `Rendered hangboard detail for ${routine.grips.length} grips, ${itemNum} items`);
+      debug('DETAIL', `Rendered hangboard detail for ${r.grips.length} grips, ${itemNum} items`);
     }
 
     showScreen('screen-detail');
@@ -994,7 +1066,10 @@ const HP = (() => {
    */
   function startHangboardTimer(routineName) {
     const routines = HP_DATA.hangboardRoutines;
-    const routine = routines[routineName];
+    const baseRoutine = routines[routineName];
+    // Apply user's hangboard settings
+    loadHbSettings();
+    const routine = baseRoutine ? applyHbOverrides(baseRoutine) : null;
 
     if (!routine || routine.type !== 'hangboard') {
       error('TIMER', `Invalid hangboard routine: ${routineName}`);
@@ -1429,8 +1504,9 @@ const HP = (() => {
       // Verify it stuck
       const check = localStorage.getItem(histKey);
       if (!check) warn('STORAGE', 'Force-save: history write did not persist');
-      // Save settings
+      // Save settings + hangboard prefs
       saveSettings();
+      saveHbSettings();
       info('STORAGE', 'Force-saved all state (lifecycle event)');
     } catch (e) {
       error('STORAGE', 'Force-save failed', e);
